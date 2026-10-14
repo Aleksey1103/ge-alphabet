@@ -24,7 +24,7 @@ Commits in this repo follow [Conventional Commits 1.0.0](https://www.conventiona
    git commit -F - <<'EOF'
    feat(letters): add Mkhedruli letter data
 
-   Optional body.
+   - optional body line
    EOF
    ```
 8. **Verify.** Run `git log -1 --stat` and `git status --short`, then report the hash and the header.
@@ -36,7 +36,8 @@ Commit on the current branch. Don't push, amend or rebase unless the user asks. 
 ```
 <type>(<scope>): <description>
 
-<body>
+- <body line>
+- <body line>
 
 <footer>
 ```
@@ -72,7 +73,9 @@ The scope is optional. It's a short lowercase noun for the area touched, such as
 
 ### Body and footer
 
-- Add a body only when the reason isn't obvious from the header. Explain what changed and why, not how. Wrap it at 72 characters and leave a blank line after the header.
+- Add a body only when the reason isn't obvious from the header. Explain what changed and why, not how. Leave a blank line after the header.
+- Write every line of the body as `- ` followed by a lowercase letter, e.g. `- drop the template favicon`. If a point would start with a capitalized name, reword it so it starts with a lowercase word: `- add AGENTS.md`, not `- AGENTS.md added`.
+- Keep each body line to 72 characters or fewer. Split a longer point into two lines, each starting with `- `, instead of wrapping onto a line without the dash.
 - For a breaking change, put `!` before the colon (`feat(letters)!: …`) and add a `BREAKING CHANGE: <what breaks>` footer. This is rare in an app with no consumers.
 - Issue references go in the footer, for example `Refs: #12`.
 
@@ -107,6 +110,6 @@ With a body:
 ```
 fix(ui): render Georgian text with Noto Sans Georgian
 
-The default system font on some Linux setups has no Georgian
-glyphs, so letters showed up as empty boxes.
+- the default system font on some Linux setups has no Georgian glyphs
+- letters showed up as empty boxes instead
 ```
