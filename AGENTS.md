@@ -6,6 +6,8 @@ A React app for learning the Georgian alphabet (Mkhedruli script).
 
 - The Vite app lives at the repo root; run every npm command from here.
 - Entry point: `src/main.tsx` → `src/App.tsx`. Global styles: `src/index.css`.
+- Audio files go in `src/assets/audio/`, one mp3 per letter named by the Georgian letter itself (`ა.mp3` … `ჰ.mp3`). Never use URL-encoded names like `%E1%83%90.mp3`, because the dev server decodes them and can't find the file.
+- Import audio (`import url from './assets/audio/ა.mp3'`, or `import.meta.glob` for the whole set) rather than referencing it by path, so Vite fingerprints the files and the build includes only what's used.
 
 ## Stack
 
