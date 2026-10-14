@@ -4,7 +4,7 @@ A React app for learning the Georgian alphabet (Mkhedruli script).
 
 ## Layout
 
-- The git repo root is this folder. The Vite app lives in `georgian-alphabet/`; run every npm command from there.
+- The Vite app lives at the repo root; run every npm command from here.
 - Entry point: `src/main.tsx` → `src/App.tsx`. Global styles: `src/index.css`.
 
 ## Stack
@@ -13,7 +13,7 @@ A React app for learning the Georgian alphabet (Mkhedruli script).
 - Package manager is npm. Don't use yarn or pnpm, and don't commit other lockfiles.
 - There is no router, state library, CSS framework or test runner yet. Ask before adding any dependency.
 
-## Commands (from `georgian-alphabet/`)
+## Commands
 
 - `npm run dev`: start the dev server
 - `npm run build`: type-check (`tsc -b`), then build
