@@ -1,0 +1,144 @@
+/* Scan only src/ for classes, so example classes in the docs don't end up in the bundle. */
+@import 'tailwindcss' source('.');
+
+@theme {
+  /* Theme: change the palette here. The tints below are derived from it. Tailwind's default
+     palette is cleared, so components can only use these colors. */
+  --color-*: initial;
+  --color-page: #071426;
+  --color-surface: #10233f;
+  --color-surface-2: #173354;
+  --color-accent: #4f8cff;
+  --color-success: #35d39a;
+  --color-error: #ff647c;
+  --color-fg: #f4f7ff;
+  --color-muted: #9fb2cd;
+  --color-on-accent: #071426;
+
+  --color-accent-hover: color-mix(in srgb, var(--color-accent), white 15%);
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  --color-success-soft: color-mix(
+    in srgb,
+    var(--color-success) 16%,
+    transparent
+  );
+  --color-error-soft: color-mix(in srgb, var(--color-error) 16%, transparent);
+  --color-success-line: color-mix(
+    in srgb,
+    var(--color-success) 40%,
+    transparent
+  );
+  --color-error-line: color-mix(in srgb, var(--color-error) 40%, transparent);
+  --color-line: color-mix(in srgb, var(--color-muted) 18%, transparent);
+
+  --font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans',
+    'Noto Sans Georgian', Sylfaen, 'DejaVu Sans', sans-serif;
+  --font-georgian:
+    'Noto Sans Georgian', 'Noto Sans', Sylfaen, 'DejaVu Sans', system-ui,
+    -apple-system, sans-serif;
+
+  /* Spacing tightens on short screens (see below) so the training screen fits without scrolling. */
+  --spacing-page: 16px;
+  --spacing-gutter: 12px;
+  --spacing-tight: 8px;
+  --spacing-section: 16px;
+  --spacing-button: 56px;
+  --spacing-touch: 48px;
+
+  --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --default-transition-duration: 250ms;
+  --default-transition-timing-function: var(--ease-snappy);
+
+  --shadow-glow: 0 8px 24px
+    color-mix(in srgb, var(--color-accent) 30%, transparent);
+
+  --animate-tile-in: tile-in 400ms var(--ease-snappy) backwards;
+  --animate-appear: appear 250ms var(--ease-snappy);
+  /* Clips are short (most under 0.6 s), so the rings pulse quickly enough to be seen. */
+  --animate-ring-pulse: ring-pulse 0.6s var(--ease-snappy) infinite;
+  --animate-ring-pulse-late: ring-pulse 0.6s var(--ease-snappy) 0.3s infinite;
+
+  @keyframes tile-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  @keyframes ring-pulse {
+    from {
+      opacity: 0.8;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.45);
+    }
+  }
+}
+
+@layer base {
+  @media (max-height: 700px) {
+    :root {
+      --spacing-page: 8px;
+      --spacing-gutter: 8px;
+      --spacing-tight: 4px;
+      --spacing-section: 10px;
+      --spacing-button: var(--spacing-touch);
+    }
+  }
+
+  html {
+    color-scheme: dark;
+    color: var(--color-fg);
+    background: var(--color-page);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--color-page);
+  }
+
+  button {
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  :lang(ka) {
+    font-family: var(--font-georgian);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
