@@ -1,0 +1,14 @@
+{
+  "printWidth": 80,
+  "proseWrap": "always",
+  "bracketSpacing": false,
+  "semi": true,
+  "singleQuote": true,
+  "plugins": [
+    "prettier-plugin-jsdoc",
+    "@aforemendude/prettier-plugin-wrap-comments",
+    "prettier-plugin-classnames"
+  ],
+  "jsdocPrintWidth": 80,
+  "jsdocLineWrappingStyle": "greedy"
+}
