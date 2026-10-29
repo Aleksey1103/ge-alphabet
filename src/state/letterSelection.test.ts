@@ -53,7 +53,7 @@ describe('matchingPresetId', () => {
   it('switches to the matching preset after a toggle', () => {
     const nearlyP = ["p'ari"];
     expect(matchingPresetId(nearlyP)).toBe('custom');
-    expect(matchingPresetId(toggleLetter(nearlyP, 'pari'))).toBe('familiar-p');
+    expect(matchingPresetId(toggleLetter(nearlyP, 'pari'))).toBe('twins-p');
   });
 
   it('falls back to Custom without changing the letters', () => {

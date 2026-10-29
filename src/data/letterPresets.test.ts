@@ -15,14 +15,14 @@ describe('LETTER_PRESETS', () => {
     expect(LETTER_PRESETS.map((preset) => preset.label)).toEqual([
       'All letters',
       'Vowels',
-      'Single sound',
-      'Familiar P sound',
-      'Familiar T sound',
-      'Familiar Ch sound',
-      'Familiar Tz sound',
-      'Familiar H sound',
-      'Familiar K sound',
-      'All familiar sounds',
+      'Distinct sounds',
+      'P twins · პ ფ',
+      'T twins · თ ტ',
+      'Ch twins · ჩ ჭ',
+      'Ts twins · ც წ',
+      'H twins · ხ ჰ',
+      'K triplets · კ ქ ყ',
+      'All twins',
       'Custom',
     ]);
   });
@@ -32,16 +32,16 @@ describe('LETTER_PRESETS', () => {
       GEORGIAN_ALPHABET.map((letter) => letter.character).join(' '),
     );
     expect(characters('vowels')).toBe('ა ე ი ო უ');
-    expect(characters('single-sound')).toBe(
+    expect(characters('distinct-sounds')).toBe(
       'ა ბ გ დ ე ვ ზ ი ლ მ ნ ო ჟ რ ს უ ღ შ ძ ჯ',
     );
-    expect(characters('familiar-p')).toBe('პ ფ');
-    expect(characters('familiar-t')).toBe('თ ტ');
-    expect(characters('familiar-ch')).toBe('ჩ ჭ');
-    expect(characters('familiar-tz')).toBe('ც წ');
-    expect(characters('familiar-h')).toBe('ხ ჰ');
-    expect(characters('familiar-k')).toBe('კ ქ ყ');
-    expect(characters('all-familiar')).toBe('თ კ პ ტ ფ ქ ყ ჩ ც წ ჭ ხ ჰ');
+    expect(characters('twins-p')).toBe('პ ფ');
+    expect(characters('twins-t')).toBe('თ ტ');
+    expect(characters('twins-ch')).toBe('ჩ ჭ');
+    expect(characters('twins-ts')).toBe('ც წ');
+    expect(characters('twins-h')).toBe('ხ ჰ');
+    expect(characters('triplets-k')).toBe('კ ქ ყ');
+    expect(characters('all-twins')).toBe('თ კ პ ტ ფ ქ ყ ჩ ც წ ჭ ხ ჰ');
     expect(characters('custom')).toBe('');
   });
 
@@ -53,11 +53,11 @@ describe('LETTER_PRESETS', () => {
     }
   });
 
-  it('splits the alphabet between single sounds and familiar sounds', () => {
-    const single = characters('single-sound').split(' ');
-    const familiar = characters('all-familiar').split(' ');
-    expect(single.filter((letter) => familiar.includes(letter))).toEqual([]);
-    expect(single.length + familiar.length).toBe(33);
+  it('splits the alphabet between distinct sounds and twins', () => {
+    const single = characters('distinct-sounds').split(' ');
+    const twins = characters('all-twins').split(' ');
+    expect(single.filter((letter) => twins.includes(letter))).toEqual([]);
+    expect(single.length + twins.length).toBe(33);
   });
 
   it('gives every preset a different set, so the select can always tell which one is checked', () => {

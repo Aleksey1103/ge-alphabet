@@ -14,14 +14,14 @@ export type GeorgianLetter = {
 export type LetterPresetId =
   | 'all'
   | 'vowels'
-  | 'single-sound'
-  | 'familiar-p'
-  | 'familiar-t'
-  | 'familiar-ch'
-  | 'familiar-tz'
-  | 'familiar-h'
-  | 'familiar-k'
-  | 'all-familiar'
+  | 'distinct-sounds'
+  | 'twins-p'
+  | 'twins-t'
+  | 'twins-ch'
+  | 'twins-ts'
+  | 'twins-h'
+  | 'triplets-k'
+  | 'all-twins'
   | 'custom';
 
 /** A ready-made letter set on the settings screen. */

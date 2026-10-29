@@ -131,7 +131,7 @@ describe('App', () => {
   });
 
   it('runs a 2-letter session', () => {
-    startTraining('Familiar P sound');
+    startTraining('P twins · პ ფ');
     expect(screen.getByRole('heading', {name: 'Question 1 of 2'})).toBeTruthy();
     expect(wheelLetters()).toEqual(['პ', 'ფ']);
     fireEvent.click(option(targetCharacter()));
@@ -150,12 +150,12 @@ describe('App', () => {
         screen.getByRole('heading', {name: 'Training complete'}),
       ).toBeTruthy();
     };
-    startTraining('Familiar P sound');
+    startTraining('P twins · პ ფ');
     finishSession();
 
     fireEvent.click(screen.getByRole('button', {name: 'New Session'}));
     expect(screen.getByRole('heading', {name: 'Choose Letters'})).toBeTruthy();
-    expect(letterSet()).toBe('Familiar P sound');
+    expect(letterSet()).toBe('P twins · პ ფ');
 
     fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
     finishSession();

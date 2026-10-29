@@ -53,7 +53,7 @@ describe('SettingsScreen', () => {
     renderSettings();
     choose('vowels');
     expect(checkedLetters()).toBe('ა ე ი ო უ');
-    choose('familiar-k');
+    choose('triplets-k');
     expect(checkedLetters()).toBe('კ ქ ყ');
   });
 
@@ -80,7 +80,7 @@ describe('SettingsScreen', () => {
     fireEvent.click(tile('პ'));
     expect(select().value).toBe('custom');
     fireEvent.click(tile('ფ'));
-    expect(select().value).toBe('familiar-p');
+    expect(select().value).toBe('twins-p');
   });
 
   it('keeps Start disabled, with a hint, until 2 letters are checked', () => {
@@ -100,7 +100,7 @@ describe('SettingsScreen', () => {
 
   it('starts with the checked letters', () => {
     const {onStart} = renderSettings();
-    choose('familiar-t');
+    choose('twins-t');
     fireEvent.click(tile('ა'));
     fireEvent.click(startButton());
     expect(onStart).toHaveBeenCalledExactlyOnceWith(['ani', 'tani', "t'ari"]);

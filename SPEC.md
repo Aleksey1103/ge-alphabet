@@ -124,22 +124,23 @@ Display:
 
 The select lists these presets in this order:
 
-| Preset              | Letters                                                                   |
-| ------------------- | ------------------------------------------------------------------------- |
-| All letters         | All 33 letters                                                            |
-| Vowels              | ა, ე, ი, ო, უ                                                             |
-| Single sound        | ა, ბ, გ, დ, ე, ვ, ზ, ი, ლ, მ, ნ, ო, ჟ, რ, ს, უ, ღ, შ, ძ, ჯ                |
-| Familiar P sound    | პ, ფ                                                                      |
-| Familiar T sound    | თ, ტ                                                                      |
-| Familiar Ch sound   | ჩ, ჭ                                                                      |
-| Familiar Tz sound   | ც, წ                                                                      |
-| Familiar H sound    | ხ, ჰ                                                                      |
-| Familiar K sound    | კ, ქ, ყ                                                                   |
-| All familiar sounds | თ, კ, პ, ტ, ფ, ქ, ყ, ჩ, ც, წ, ჭ, ხ, ჰ (the six "Familiar … sound" groups) |
-| Custom              | None                                                                      |
+| Preset             | Letters                                                      |
+| ------------------ | ------------------------------------------------------------ |
+| All letters        | All 33 letters                                               |
+| Vowels             | ა, ე, ი, ო, უ                                                |
+| Distinct sounds    | ა, ბ, გ, დ, ე, ვ, ზ, ი, ლ, მ, ნ, ო, ჟ, რ, ს, უ, ღ, შ, ძ, ჯ   |
+| P twins · პ ფ      | პ, ფ                                                         |
+| T twins · თ ტ      | თ, ტ                                                         |
+| Ch twins · ჩ ჭ     | ჩ, ჭ                                                         |
+| Ts twins · ც წ     | ც, წ                                                         |
+| H twins · ხ ჰ      | ხ, ჰ                                                         |
+| K triplets · კ ქ ყ | კ, ქ, ყ                                                      |
+| All twins          | თ, კ, პ, ტ, ფ, ქ, ყ, ჩ, ც, წ, ჭ, ხ, ჰ (the six groups above) |
+| Custom             | None                                                         |
 
-"Single sound" and "All familiar sounds" share no letters, and together they
-cover all 33.
+The twins and triplets are letters that sound alike to an English speaker. Their
+labels end with their letters, as shown. "Distinct sounds" and "All twins" share
+no letters, and together they cover all 33.
 
 **Letter picker**
 
