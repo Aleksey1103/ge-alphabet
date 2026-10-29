@@ -22,6 +22,7 @@ describe('ResultsScreen', () => {
         stats={stats}
         totalExercises={33}
         onRestart={vi.fn()}
+        onNewSession={vi.fn()}
         onExit={vi.fn()}
       />,
     );
@@ -51,6 +52,7 @@ describe('ResultsScreen', () => {
         stats={stats}
         totalExercises={2}
         onRestart={vi.fn()}
+        onNewSession={vi.fn()}
         onExit={vi.fn()}
       />,
     );
@@ -58,8 +60,9 @@ describe('ResultsScreen', () => {
     expect(valueOf('Accuracy')).toBe('0%');
   });
 
-  it('restarts or exits from the buttons', () => {
+  it('restarts, starts a new session or exits from the buttons', () => {
     const onRestart = vi.fn();
+    const onNewSession = vi.fn();
     const onExit = vi.fn();
     const stats: TrainingStats = {
       ...EMPTY_STATS,
@@ -72,13 +75,18 @@ describe('ResultsScreen', () => {
         stats={stats}
         totalExercises={1}
         onRestart={onRestart}
+        onNewSession={onNewSession}
         onExit={onExit}
       />,
     );
+    expect(screen.queryByRole('button', {name: 'Exit to Home'})).toBeNull();
     fireEvent.click(screen.getByRole('button', {name: 'Restart Training'}));
-    fireEvent.click(screen.getByRole('button', {name: 'Exit to Home'}));
     expect(onRestart).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole('button', {name: 'New Session'}));
+    expect(onNewSession).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole('button', {name: 'Exit to home'}));
     expect(onExit).toHaveBeenCalledTimes(1);
+    expect(onRestart).toHaveBeenCalledTimes(1);
   });
 
   it('handles being opened without session data', () => {
@@ -88,6 +96,7 @@ describe('ResultsScreen', () => {
         stats={null}
         totalExercises={0}
         onRestart={vi.fn()}
+        onNewSession={vi.fn()}
         onExit={onExit}
       />,
     );

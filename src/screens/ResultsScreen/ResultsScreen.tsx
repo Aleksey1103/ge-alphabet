@@ -1,3 +1,4 @@
+import IconButton from '../../components/IconButton/index.ts';
 import PrimaryButton from '../../components/PrimaryButton/index.ts';
 import ProgressBar from '../../components/ProgressBar/index.ts';
 import Screen from '../../components/Screen/index.ts';
@@ -13,6 +14,8 @@ type ResultsScreenProps = {
   stats: TrainingStats | null;
   totalExercises: number;
   onRestart: () => void;
+  /** Opens the settings screen to choose the next session's letters. */
+  onNewSession: () => void;
   onExit: () => void;
 };
 
@@ -20,6 +23,7 @@ export default function ResultsScreen({
   stats,
   totalExercises,
   onRestart,
+  onNewSession,
   onExit,
 }: ResultsScreenProps) {
   if (stats === null || totalExercises === 0) {
@@ -48,7 +52,15 @@ export default function ResultsScreen({
 
   return (
     <Screen className="gap-4">
-      <ScreenHeading className={TITLE_CLASSES}>Training complete</ScreenHeading>
+      <header
+        className="grid grid-cols-[var(--spacing-touch)_1fr] items-center
+          gap-gutter"
+      >
+        <IconButton icon="close" label="Exit to home" onClick={onExit} />
+        <ScreenHeading className="text-[1.75rem] leading-[1.2]">
+          Training complete
+        </ScreenHeading>
+      </header>
 
       <section
         className="flex flex-col items-center gap-1 rounded-3xl bg-surface px-4
@@ -68,7 +80,11 @@ export default function ResultsScreen({
         <p className="text-[0.9375rem] text-muted">{accuracy}% accuracy</p>
       </section>
 
-      <dl className="divide-y divide-line rounded-3xl bg-surface px-4 py-1">
+      {/* On a short screen the list shrinks and scrolls by itself, so the screen around it doesn't. */}
+      <dl
+        className="min-h-0 divide-y divide-line overflow-y-auto
+          overscroll-contain rounded-3xl bg-surface px-4 py-1"
+      >
         {rows.map(([label, value]) => (
           <div key={label} className="flex justify-between gap-3 py-3">
             <dt className="text-muted">{label}</dt>
@@ -79,8 +95,8 @@ export default function ResultsScreen({
 
       <div className={ACTIONS_CLASSES}>
         <PrimaryButton onClick={onRestart}>Restart Training</PrimaryButton>
-        <PrimaryButton variant="secondary" onClick={onExit}>
-          Exit to Home
+        <PrimaryButton variant="secondary" onClick={onNewSession}>
+          New Session
         </PrimaryButton>
       </div>
     </Screen>

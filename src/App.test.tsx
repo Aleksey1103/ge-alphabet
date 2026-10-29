@@ -139,6 +139,30 @@ describe('App', () => {
     expect(score()).toBe('+1');
   });
 
+  it('goes from the results to a new session or home', () => {
+    const finishSession = () => {
+      for (let i = 0; i < 2; i++) {
+        fireEvent.click(option(targetCharacter()));
+        fireEvent.click(confirmButton());
+        wait(FEEDBACK_DELAY_MS);
+      }
+      expect(
+        screen.getByRole('heading', {name: 'Training complete'}),
+      ).toBeTruthy();
+    };
+    startTraining('Familiar P sound');
+    finishSession();
+
+    fireEvent.click(screen.getByRole('button', {name: 'New Session'}));
+    expect(screen.getByRole('heading', {name: 'Choose Letters'})).toBeTruthy();
+    expect(letterSet()).toBe('Familiar P sound');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
+    finishSession();
+    fireEvent.click(screen.getByRole('button', {name: 'Exit to home'}));
+    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+  });
+
   it('reopens the settings with the letters of the last session', () => {
     startTraining('Vowels');
     fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));

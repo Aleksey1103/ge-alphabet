@@ -62,6 +62,10 @@ function App() {
           stats={state.stats}
           totalExercises={state.exercises.length}
           onRestart={() => session.start(sessionLetters)}
+          onNewSession={() => {
+            setIdleView('settings');
+            session.exit();
+          }}
           onExit={session.exit}
         />
       );

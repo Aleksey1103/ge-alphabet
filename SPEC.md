@@ -229,6 +229,8 @@ content to overflow.
 
 When all exercises have been completed, display:
 
+- An exit button (×) in the header, like the one on the training screen, that
+  returns to the main screen.
 - Final score.
 - Number of correct first attempts.
 - Number of correct second attempts.
@@ -236,10 +238,13 @@ When all exercises have been completed, display:
 - Total number of exercises.
 - Accuracy percentage.
 - A "Restart Training" button.
-- An "Exit to Home" button.
+- A "New Session" button.
 
 Restarting must create a new session with the same letters and a newly
 randomized exercise order, and reset all session statistics.
+
+"New Session" must open the settings screen, with the letters of the session
+just finished checked, so the user can choose different letters.
 
 Exiting must return to the main screen.
 
@@ -579,6 +584,8 @@ At minimum, verify:
 19. "Start Training" is disabled while fewer than 2 letters are checked.
 20. The training wheel offers only the session's letters.
 21. The settings screen's back button returns to the main screen.
+22. "New Session" on the results screen opens the settings screen with the
+    finished session's letters, and its exit button returns to the main screen.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
@@ -626,7 +633,7 @@ The application is complete when:
 - Exercises appear in randomized order.
 - The first- and second-attempt logic matches the specified rules.
 - The score and statistics are correct.
-- Results, restart, and exit navigation work.
+- Results, restart, new session, and exit navigation work.
 - Automated tests pass.
 - TypeScript checks and the production build succeed.
 - Any missing audio recordings are explicitly documented rather than simulated.
