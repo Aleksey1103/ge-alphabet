@@ -91,7 +91,8 @@ Design guidelines:
 
 ## 5. Application Screens
 
-Implement three main screens.
+Implement four main screens. The user moves through them in this order: main
+screen, settings screen, training screen, results screen.
 
 ### 5.1. Main Screen
 
@@ -101,18 +102,80 @@ Display:
 - A prominent Georgian alphabet visual element.
 - A short description explaining that the user will hear sounds and select the
   matching letters.
+- A primary button, such as "Get Started".
+
+Clicking the button must navigate to the settings screen.
+
+### 5.2. Settings Screen
+
+The settings screen sets the letters for the next training session.
+
+Display:
+
+- A title, such as "Choose Letters".
+- A select with the letter presets listed below.
+- A letter picker with all 33 letters.
+- The number of checked letters, such as "5 letters selected".
 - A primary "Start Training" button.
 
-Clicking the button must initialize a new training session and navigate to the
-training screen.
+**Letter presets**
 
-### 5.2. Training Screen
+The select lists these presets in this order:
+
+| Preset              | Letters                                                                   |
+| ------------------- | ------------------------------------------------------------------------- |
+| All letters         | All 33 letters                                                            |
+| Vowels              | ა, ე, ი, ო, უ                                                             |
+| Single sound        | ა, ბ, გ, დ, ე, ვ, ზ, ი, ლ, მ, ნ, ო, ჟ, რ, ს, უ, ღ, შ, ძ, ჯ                |
+| Familiar P sound    | პ, ფ                                                                      |
+| Familiar T sound    | თ, ტ                                                                      |
+| Familiar Ch sound   | ჩ, ჭ                                                                      |
+| Familiar Tz sound   | ც, წ                                                                      |
+| Familiar H sound    | ხ, ჰ                                                                      |
+| Familiar K sound    | კ, ქ, ყ                                                                   |
+| All familiar sounds | თ, კ, პ, ტ, ფ, ქ, ყ, ჩ, ც, წ, ჭ, ხ, ჰ (the six "Familiar … sound" groups) |
+| Custom              | None                                                                      |
+
+"Single sound" and "All familiar sounds" share no letters, and together they
+cover all 33.
+
+**Letter picker**
+
+- Display all 33 letters in alphabetical order as a grid of toggle tiles that
+  fits the container without horizontal scrolling.
+- Tapping a tile checks or unchecks that letter and changes no other letter.
+- Make checked tiles clearly distinct, with an icon or other mark as well as
+  color, and expose each tile's checked state to screen readers.
+
+**Select and picker behavior**
+
+The picker is the source of truth for the session's letters. The select is a
+shortcut for filling the picker.
+
+- Choosing a preset checks exactly its letters and unchecks all others.
+- Choosing "Custom" unchecks every letter.
+- After every change, the select shows the preset whose letters exactly match
+  the checked letters, or "Custom" when none match. Switching to "Custom" this
+  way leaves the checked letters as they are.
+- The first time the screen opens, "All letters" is selected and all 33 letters
+  are checked. Later, the screen opens with the letters of the last started
+  session.
+
+**Start button**
+
+- Clicking "Start Training" creates a new training session from the checked
+  letters and navigates to the training screen.
+- Disable the button when fewer than 2 letters are checked, and show a short
+  hint, such as "Choose at least 2 letters".
+
+### 5.3. Training Screen
 
 Divide the available screen height into two vertically stacked sections.
 
 **Upper section: Audio**
 
-- Display the current exercise number, such as "Question 3 of 33".
+- Display the current exercise number out of the session's total, such as
+  "Question 3 of 20".
 - Display a short instruction, such as "Listen and find the letter".
 - Provide a prominent audio playback button.
 - Allow the user to replay the current sound as many times as needed.
@@ -131,8 +194,10 @@ letter sound.
 
 - Display the letters in a vertical, iOS-style picker wheel: the letters sit on
   a 3D drum that turns behind a fixed selection band in the middle.
-- The wheel loops: after the last letter (ჰ) it continues with the first (ა), in
-  both directions.
+- The wheel offers only the session's letters, in alphabetical order. It must
+  work with as few as 2 letters.
+- The wheel loops: after the session's last letter it continues with its first
+  letter, in both directions.
 - Users spin the wheel by swiping or dragging vertically. It coasts with
   momentum and always stops with one letter in the selection band.
 - The letter that stops in the selection band after the user spins the wheel
@@ -155,7 +220,7 @@ The upper and lower sections should remain visually distinct and usable on small
 screens. Use a flexible layout rather than fixed heights that could cause
 content to overflow.
 
-### 5.3. Results Screen
+### 5.4. Results Screen
 
 When all exercises have been completed, display:
 
@@ -168,8 +233,8 @@ When all exercises have been completed, display:
 - A "Restart Training" button.
 - An "Exit to Home" button.
 
-Restarting must create a new session with a newly randomized exercise order and
-reset all session statistics.
+Restarting must create a new session with the same letters and a newly
+randomized exercise order, and reset all session statistics.
 
 Exiting must return to the main screen.
 
@@ -201,6 +266,9 @@ type GeorgianLetter = {
 ```
 
 Keep the alphabet data separate from UI components and training logic.
+
+Define the letter presets from section 5.2 in a typed data module as well. Make
+them reference letters by ID instead of repeating the letter data.
 
 ### Audio requirements
 
@@ -244,11 +312,12 @@ and provide a retry option instead of silently failing.
 
 ## 7. Training Session Logic
 
-Each training session must contain all 33 letters exactly once.
+Each training session must contain every letter checked on the settings screen
+exactly once, and no other letters. A session needs at least 2 letters.
 
 When the user starts or restarts a session:
 
-1. Create a new array containing all 33 alphabet entries.
+1. Create a new array containing the session's letters.
 2. Randomize their order using a proper Fisher–Yates shuffle.
 3. Initialize the session index to the first exercise.
 4. Reset the score and attempt statistics.
@@ -369,7 +438,7 @@ Display:
 - Correct first attempts.
 - Correct second attempts.
 - Failed exercises.
-- Total exercises: 33.
+- Total exercises, equal to the number of letters in the session.
 - Total submitted attempts.
 - Accuracy percentage.
 
@@ -463,6 +532,7 @@ Handle the following cases:
 
 - Audio file is missing or cannot be loaded.
 - Audio playback is rejected by the browser.
+- The user attempts to start a session with fewer than 2 letters checked.
 - The user attempts to confirm without selecting a letter.
 - The user rapidly taps the confirmation button.
 - The user restarts a session while feedback is visible.
@@ -479,7 +549,7 @@ Write automated tests for the training logic and scoring system.
 
 At minimum, verify:
 
-1. A new session contains all 33 letters.
+1. A new session contains exactly the letters checked on the settings screen.
 2. Every letter appears exactly once per session.
 3. The exercise order is randomized without losing or duplicating entries.
 4. A correct first attempt adds 1 point and advances.
@@ -489,12 +559,20 @@ At minimum, verify:
 8. Two incorrect attempts result in a net score of -2.
 9. No third attempt is possible.
 10. The final exercise opens the results screen.
-11. Restarting resets statistics and generates a new shuffled session.
+11. Restarting resets statistics and generates a new shuffled session with the
+    same letters.
 12. Rapid repeated submissions do not cause duplicate scoring.
 13. Accuracy is calculated correctly, including the zero-attempt case.
 14. Missing audio files produce understandable feedback.
 15. The Slow button plays the current recording at half speed, and the main
     button plays it at normal speed.
+16. Each preset contains exactly the letters listed in section 5.2.
+17. Choosing a preset checks exactly its letters, and choosing "Custom" unchecks
+    every letter.
+18. Checking or unchecking a letter switches the select to the matching preset,
+    or to "Custom" without changing the checked letters.
+19. "Start Training" is disabled while fewer than 2 letters are checked.
+20. The training wheel offers only the session's letters.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
@@ -529,11 +607,14 @@ changes that preserve useful existing work.
 
 The application is complete when:
 
-- All three screens are implemented.
+- All four screens are implemented.
+- The settings screen's presets, letter picker and start button work as
+  specified.
 - The interface follows the dark blue mobile-first design.
 - The application remains narrow and centered on desktop screens.
 - The vertical carousel supports selecting Georgian letters.
-- All 33 letters are represented in the training session.
+- Each training session contains exactly the letters chosen on the settings
+  screen.
 - Audio playback uses correctly mapped recordings.
 - The current sound can be played at normal speed and at half speed.
 - Exercises appear in randomized order.
