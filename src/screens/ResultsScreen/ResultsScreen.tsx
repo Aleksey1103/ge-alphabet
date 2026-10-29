@@ -1,7 +1,7 @@
-import PrimaryButton from '../../components/PrimaryButton.tsx';
-import ProgressBar from '../../components/ProgressBar.tsx';
-import Screen from '../../components/Screen.tsx';
-import ScreenHeading from '../../components/ScreenHeading.tsx';
+import PrimaryButton from '../../components/PrimaryButton/index.ts';
+import ProgressBar from '../../components/ProgressBar/index.ts';
+import Screen from '../../components/Screen/index.ts';
+import ScreenHeading from '../../components/ScreenHeading/index.ts';
 import type {TrainingStats} from '../../types/training.ts';
 import {calculateAccuracy, formatScore} from '../../utils/scoring.ts';
 

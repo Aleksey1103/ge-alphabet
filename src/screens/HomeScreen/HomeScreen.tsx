@@ -1,6 +1,6 @@
-import PrimaryButton from '../../components/PrimaryButton.tsx';
-import Screen from '../../components/Screen.tsx';
-import ScreenHeading from '../../components/ScreenHeading.tsx';
+import PrimaryButton from '../../components/PrimaryButton/index.ts';
+import Screen from '../../components/Screen/index.ts';
+import ScreenHeading from '../../components/ScreenHeading/index.ts';
 import type {GeorgianLetter} from '../../types/alphabet.ts';
 import {
   formatScore,

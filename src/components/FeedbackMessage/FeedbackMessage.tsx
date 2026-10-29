@@ -1,11 +1,11 @@
-import type {GeorgianLetter} from '../types/alphabet.ts';
-import type {Feedback} from '../types/training.ts';
-import {cx} from '../utils/classNames.ts';
+import type {GeorgianLetter} from '../../types/alphabet.ts';
+import type {Feedback} from '../../types/training.ts';
+import {cx} from '../../utils/classNames.ts';
 import {
   formatScore,
   POINTS_FOR_CORRECT,
   POINTS_FOR_INCORRECT,
-} from '../utils/scoring.ts';
+} from '../../utils/scoring.ts';
 
 type FeedbackMessageProps = {
   feedback: Feedback | null;

@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
-import {cx} from '../utils/classNames.ts';
-import PrimaryButton from './PrimaryButton.tsx';
+import {cx} from '../../utils/classNames.ts';
+import PrimaryButton from '../PrimaryButton/index.ts';
 
 type PlayerState = 'ready' | 'loading' | 'playing' | 'load-error' | 'blocked';
 

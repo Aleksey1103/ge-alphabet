@@ -1,5 +1,5 @@
 import type {ButtonHTMLAttributes} from 'react';
-import {cx} from '../utils/classNames.ts';
+import {cx} from '../../utils/classNames.ts';
 
 /**
  * No `className`: callers pick a look with `variant` and `compact` (see

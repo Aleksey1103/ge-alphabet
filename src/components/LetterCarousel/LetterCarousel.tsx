@@ -2,15 +2,15 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
 import {useEffect, useEffectEvent, useState, type KeyboardEvent} from 'react';
-import type {GeorgianLetter} from '../types/alphabet.ts';
-import type {LetterStatus} from '../types/training.ts';
-import {cx} from '../utils/classNames.ts';
+import type {GeorgianLetter} from '../../types/alphabet.ts';
+import type {LetterStatus} from '../../types/training.ts';
+import {cx} from '../../utils/classNames.ts';
 import {
   findPickable,
   loopOffset,
   wheelItemAngle,
   wheelRadius,
-} from '../utils/picker.ts';
+} from '../../utils/picker.ts';
 
 type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
 

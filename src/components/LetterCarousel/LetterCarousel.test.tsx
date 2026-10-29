@@ -1,7 +1,7 @@
 import {act, fireEvent, render, screen} from '@testing-library/react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
-import {GEORGIAN_ALPHABET} from '../data/georgianAlphabet.ts';
-import {wrap, WHEEL_ITEM_ANGLE} from '../utils/picker.ts';
+import {GEORGIAN_ALPHABET} from '../../data/georgianAlphabet.ts';
+import {wrap, WHEEL_ITEM_ANGLE} from '../../utils/picker.ts';
 import LetterCarousel from './LetterCarousel.tsx';
 
 /**

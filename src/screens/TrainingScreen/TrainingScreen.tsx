@@ -1,10 +1,10 @@
-import AudioPlayer from '../../components/AudioPlayer.tsx';
-import FeedbackMessage from '../../components/FeedbackMessage.tsx';
-import LetterCarousel from '../../components/LetterCarousel.tsx';
-import PrimaryButton from '../../components/PrimaryButton.tsx';
-import ProgressBar from '../../components/ProgressBar.tsx';
-import Screen from '../../components/Screen.tsx';
-import ScreenHeading from '../../components/ScreenHeading.tsx';
+import AudioPlayer from '../../components/AudioPlayer/index.ts';
+import FeedbackMessage from '../../components/FeedbackMessage/index.ts';
+import LetterCarousel from '../../components/LetterCarousel/index.ts';
+import PrimaryButton from '../../components/PrimaryButton/index.ts';
+import ProgressBar from '../../components/ProgressBar/index.ts';
+import Screen from '../../components/Screen/index.ts';
+import ScreenHeading from '../../components/ScreenHeading/index.ts';
 import type {TrainingSession} from '../../hooks/useTrainingSession.ts';
 import {
   canSelectLetter,

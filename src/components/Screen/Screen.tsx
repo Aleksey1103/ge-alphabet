@@ -1,5 +1,5 @@
 import type {ReactNode} from 'react';
-import {cx} from '../utils/classNames.ts';
+import {cx} from '../../utils/classNames.ts';
 
 type ScreenProps = {
   children: ReactNode;

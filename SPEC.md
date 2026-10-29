@@ -389,45 +389,43 @@ Ensure that all statistics reconcile with the scoring rules.
 
 Keep the code modular and maintainable.
 
-Suggested project structure:
+Suggested project structure (one example per folder):
 
 ```text
 src/
   components/
-    AudioPlayer.tsx
-    LetterCarousel.tsx
-    PrimaryButton.tsx
-    FeedbackMessage.tsx
-  data/
-    georgianAlphabet.ts
-  hooks/
-    useTrainingSession.ts
+    AudioPlayer/
+      AudioPlayer.tsx
+      AudioPlayer.test.tsx
+      index.ts
   screens/
     HomeScreen/
       HomeScreen.tsx
       index.ts
-    TrainingScreen/
-      TrainingScreen.tsx
-      index.ts
-    ResultsScreen/
-      ResultsScreen.tsx
-      ResultsScreen.test.tsx
-      index.ts
+  data/
+    georgianAlphabet.ts
+  hooks/
+    useTrainingSession.ts
+  state/
+    trainingSession.ts
   types/
     alphabet.ts
   utils/
-    shuffle.ts
     scoring.ts
+    scoring.test.ts
+  test/            # test setup and shared helpers
+    setup.ts
   App.tsx
   main.tsx
   index.css        # Tailwind entry: @import "tailwindcss", @theme tokens, base styles
 ```
 
-Each screen lives in its own folder under `screens/`, together with the files
-that belong only to it, such as its tests. The folder's `index.ts` re-exports
-the screen component as its default export
-(`export {default} from './HomeScreen.tsx';`), and other modules import the
-screen through it (`import HomeScreen from './screens/HomeScreen/index.ts'`).
+Each component and each screen lives in its own folder, named after it, under
+`components/` or `screens/`, together with the files that belong only to it,
+such as its tests. The folder's `index.ts` re-exports the component as its
+default export (`export {default} from './AudioPlayer.tsx';`), and other modules
+import it through that file
+(`import AudioPlayer from '../../components/AudioPlayer/index.ts'`).
 
 You may modify this structure if necessary, but keep data, business logic, and
 presentation separate.

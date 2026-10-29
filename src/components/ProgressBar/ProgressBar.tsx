@@ -1,5 +1,5 @@
 import type {HTMLAttributes} from 'react';
-import {cx} from '../utils/classNames.ts';
+import {cx} from '../../utils/classNames.ts';
 
 type ProgressBarProps = {
   value: number;
