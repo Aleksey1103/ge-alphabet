@@ -1,7 +1,7 @@
 import {fireEvent, render, screen} from '@testing-library/react';
 import {describe, expect, it, vi} from 'vitest';
-import type {TrainingStats} from '../types/training.ts';
-import {EMPTY_STATS} from '../utils/scoring.ts';
+import type {TrainingStats} from '../../types/training.ts';
+import {EMPTY_STATS} from '../../utils/scoring.ts';
 import ResultsScreen from './ResultsScreen.tsx';
 
 function valueOf(label: string): string | null | undefined {

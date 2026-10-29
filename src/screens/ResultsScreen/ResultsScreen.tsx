@@ -1,9 +1,9 @@
-import PrimaryButton from '../components/PrimaryButton.tsx';
-import ProgressBar from '../components/ProgressBar.tsx';
-import Screen from '../components/Screen.tsx';
-import ScreenHeading from '../components/ScreenHeading.tsx';
-import type {TrainingStats} from '../types/training.ts';
-import {calculateAccuracy, formatScore} from '../utils/scoring.ts';
+import PrimaryButton from '../../components/PrimaryButton.tsx';
+import ProgressBar from '../../components/ProgressBar.tsx';
+import Screen from '../../components/Screen.tsx';
+import ScreenHeading from '../../components/ScreenHeading.tsx';
+import type {TrainingStats} from '../../types/training.ts';
+import {calculateAccuracy, formatScore} from '../../utils/scoring.ts';
 
 const TITLE_CLASSES = 'pt-2 text-[1.75rem] leading-[1.2]';
 const ACTIONS_CLASSES = 'mt-auto flex flex-col gap-3';

@@ -1,8 +1,8 @@
 import {GEORGIAN_ALPHABET} from './data/georgianAlphabet.ts';
 import {useTrainingSession} from './hooks/useTrainingSession.ts';
-import HomeScreen from './screens/HomeScreen.tsx';
-import ResultsScreen from './screens/ResultsScreen.tsx';
-import TrainingScreen from './screens/TrainingScreen.tsx';
+import HomeScreen from './screens/HomeScreen/index.ts';
+import ResultsScreen from './screens/ResultsScreen/index.ts';
+import TrainingScreen from './screens/TrainingScreen/index.ts';
 import {cx} from './utils/classNames.ts';
 
 function App() {

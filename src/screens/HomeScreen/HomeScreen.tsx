@@ -1,12 +1,12 @@
-import PrimaryButton from '../components/PrimaryButton.tsx';
-import Screen from '../components/Screen.tsx';
-import ScreenHeading from '../components/ScreenHeading.tsx';
-import type {GeorgianLetter} from '../types/alphabet.ts';
+import PrimaryButton from '../../components/PrimaryButton.tsx';
+import Screen from '../../components/Screen.tsx';
+import ScreenHeading from '../../components/ScreenHeading.tsx';
+import type {GeorgianLetter} from '../../types/alphabet.ts';
 import {
   formatScore,
   POINTS_FOR_CORRECT,
   POINTS_FOR_INCORRECT,
-} from '../utils/scoring.ts';
+} from '../../utils/scoring.ts';
 
 type HomeScreenProps = {
   letters: readonly GeorgianLetter[];

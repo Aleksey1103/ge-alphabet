@@ -1,19 +1,19 @@
-import AudioPlayer from '../components/AudioPlayer.tsx';
-import FeedbackMessage from '../components/FeedbackMessage.tsx';
-import LetterCarousel from '../components/LetterCarousel.tsx';
-import PrimaryButton from '../components/PrimaryButton.tsx';
-import ProgressBar from '../components/ProgressBar.tsx';
-import Screen from '../components/Screen.tsx';
-import ScreenHeading from '../components/ScreenHeading.tsx';
-import type {TrainingSession} from '../hooks/useTrainingSession.ts';
+import AudioPlayer from '../../components/AudioPlayer.tsx';
+import FeedbackMessage from '../../components/FeedbackMessage.tsx';
+import LetterCarousel from '../../components/LetterCarousel.tsx';
+import PrimaryButton from '../../components/PrimaryButton.tsx';
+import ProgressBar from '../../components/ProgressBar.tsx';
+import Screen from '../../components/Screen.tsx';
+import ScreenHeading from '../../components/ScreenHeading.tsx';
+import type {TrainingSession} from '../../hooks/useTrainingSession.ts';
 import {
   canSelectLetter,
   canSubmit,
   getLetterStatus,
-} from '../state/trainingSession.ts';
-import type {GeorgianLetter} from '../types/alphabet.ts';
-import {cx} from '../utils/classNames.ts';
-import {formatScore} from '../utils/scoring.ts';
+} from '../../state/trainingSession.ts';
+import type {GeorgianLetter} from '../../types/alphabet.ts';
+import {cx} from '../../utils/classNames.ts';
+import {formatScore} from '../../utils/scoring.ts';
 
 const SECTION_CLASSES = 'flex flex-col rounded-3xl bg-surface';
 

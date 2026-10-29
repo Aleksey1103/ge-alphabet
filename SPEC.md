@@ -403,9 +403,16 @@ src/
   hooks/
     useTrainingSession.ts
   screens/
-    HomeScreen.tsx
-    TrainingScreen.tsx
-    ResultsScreen.tsx
+    HomeScreen/
+      HomeScreen.tsx
+      index.ts
+    TrainingScreen/
+      TrainingScreen.tsx
+      index.ts
+    ResultsScreen/
+      ResultsScreen.tsx
+      ResultsScreen.test.tsx
+      index.ts
   types/
     alphabet.ts
   utils/
@@ -415,6 +422,12 @@ src/
   main.tsx
   index.css        # Tailwind entry: @import "tailwindcss", @theme tokens, base styles
 ```
+
+Each screen lives in its own folder under `screens/`, together with the files
+that belong only to it, such as its tests. The folder's `index.ts` re-exports
+the screen component as its default export
+(`export {default} from './HomeScreen.tsx';`), and other modules import the
+screen through it (`import HomeScreen from './screens/HomeScreen/index.ts'`).
 
 You may modify this structure if necessary, but keep data, business logic, and
 presentation separate.
