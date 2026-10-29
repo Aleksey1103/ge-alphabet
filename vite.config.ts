@@ -5,6 +5,8 @@ import {defineConfig} from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
+  // GitHub Pages serves the app from https://aleksey1103.github.io/ge-alphabet/
+  base: '/ge-alphabet/',
   plugins: [react(), tailwindcss()],
   test: {
     environment: 'jsdom',
