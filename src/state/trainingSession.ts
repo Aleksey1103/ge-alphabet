@@ -8,6 +8,9 @@ import type {
 import {applyAttempt, EMPTY_STATS} from '../utils/scoring.ts';
 import {shuffle, type RandomSource} from '../utils/shuffle.ts';
 
+/** The fewest letters a session can have. */
+export const MIN_SESSION_LETTERS = 2;
+
 export const initialTrainingState: TrainingState = {
   phase: 'idle',
   sessionId: 0,
@@ -85,7 +88,7 @@ export function trainingReducer(
 ): TrainingState {
   switch (action.type) {
     case 'start':
-      if (action.exercises.length === 0) return state;
+      if (action.exercises.length < MIN_SESSION_LETTERS) return state;
       return {
         ...initialTrainingState,
         phase: 'answering',

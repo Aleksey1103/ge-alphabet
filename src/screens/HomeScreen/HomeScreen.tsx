@@ -10,10 +10,10 @@ import {
 
 type HomeScreenProps = {
   letters: readonly GeorgianLetter[];
-  onStart: () => void;
+  onGetStarted: () => void;
 };
 
-export default function HomeScreen({letters, onStart}: HomeScreenProps) {
+export default function HomeScreen({letters, onGetStarted}: HomeScreenProps) {
   return (
     <Screen className="gap-6">
       <header className="flex flex-col gap-2 pt-2">
@@ -27,9 +27,9 @@ export default function HomeScreen({letters, onStart}: HomeScreenProps) {
           Learn Georgian
         </ScreenHeading>
         <p className="text-muted">
-          Listen to the sound of a Georgian letter, then find it among all{' '}
-          {letters.length} letters. Each session covers the whole alphabet in a
-          new random order.
+          Listen to the sound of a Georgian letter, then find it on the letter
+          wheel. Train all {letters.length} letters or choose a smaller set.
+          Each session asks them in a new random order.
         </p>
       </header>
 
@@ -54,7 +54,7 @@ export default function HomeScreen({letters, onStart}: HomeScreenProps) {
       </div>
 
       <div className="mt-auto flex flex-col gap-3">
-        <PrimaryButton onClick={onStart}>Start Training</PrimaryButton>
+        <PrimaryButton onClick={onGetStarted}>Get Started</PrimaryButton>
         <p className="text-center text-sm text-muted">
           Two tries per letter · {formatScore(POINTS_FOR_CORRECT)} for a right
           answer, {formatScore(POINTS_FOR_INCORRECT)} for a wrong one

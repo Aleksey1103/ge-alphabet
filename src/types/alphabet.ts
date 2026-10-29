@@ -10,3 +10,25 @@ export type GeorgianLetter = {
   /** URL of the recorded sound, or `null` if the recording is missing. */
   audioSrc: string | null;
 };
+
+export type LetterPresetId =
+  | 'all'
+  | 'vowels'
+  | 'single-sound'
+  | 'familiar-p'
+  | 'familiar-t'
+  | 'familiar-ch'
+  | 'familiar-tz'
+  | 'familiar-h'
+  | 'familiar-k'
+  | 'all-familiar'
+  | 'custom';
+
+/** A ready-made letter set on the settings screen. */
+export type LetterPreset = {
+  id: LetterPresetId;
+  /** The name shown in the preset select. */
+  label: string;
+  /** The preset's letter IDs in alphabetical order. Empty for `custom`. */
+  letterIds: readonly string[];
+};

@@ -43,6 +43,40 @@ export const WHEEL_ITEM_ANGLE = 20;
 const WHEEL_ITEMS_EACH_SIDE = 4;
 
 /**
+ * How many slides the wheel needs for `letterCount` letters: the letters
+ * repeated whole until there are more than fit in view. With fewer, the point
+ * where the loop wraps round would be on screen, and a letter would jump from
+ * the top of the wheel to the bottom.
+ */
+export function wheelSlideCount(letterCount: number): number {
+  if (letterCount <= 0) return 0;
+  const minSlides = 2 * WHEEL_ITEMS_EACH_SIDE + 1;
+  return Math.ceil(minSlides / letterCount) * letterCount;
+}
+
+/**
+ * The copy of letter `letterIndex` nearest to slide `from` on a wheel of
+ * `slideCount` slides, where slide `i` shows letter `i % letterCount`.
+ */
+export function nearestSlide(
+  from: number,
+  letterIndex: number,
+  letterCount: number,
+  slideCount: number,
+): number {
+  let nearest = letterIndex;
+  for (let slide = letterIndex; slide < slideCount; slide += letterCount) {
+    if (
+      Math.abs(loopOffset(from, slide, slideCount)) <
+      Math.abs(loopOffset(from, nearest, slideCount))
+    ) {
+      nearest = slide;
+    }
+  }
+  return nearest;
+}
+
+/**
  * The radius in px of a wheel whose items are `itemSize` px tall and
  * `WHEEL_ITEM_ANGLE` apart.
  */

@@ -52,8 +52,43 @@ function score(): string | null {
   );
 }
 
-function startTraining() {
+/** A statistic on the results screen. */
+function valueOf(label: string): string | null | undefined {
+  return screen.getByText(label).nextElementSibling?.textContent;
+}
+
+function openSettings() {
+  fireEvent.click(screen.getByRole('button', {name: 'Get Started'}));
+}
+
+function chooseLetterSet(label: string) {
+  const select = screen.getByRole('combobox', {name: 'Letter set'});
+  const option = [...select.querySelectorAll('option')].find(
+    (element) => element.textContent === label,
+  );
+  if (!option) throw new Error(`no letter set ${label}`);
+  fireEvent.change(select, {target: {value: option.value}});
+}
+
+function letterSet(): string | undefined {
+  const select = screen.getByRole<HTMLSelectElement>('combobox', {
+    name: 'Letter set',
+  });
+  return select.selectedOptions[0]?.textContent;
+}
+
+/** The distinct letters on the wheel, which repeats a short set. */
+function wheelLetters(): string[] {
+  const characters = screen
+    .getAllByRole('option')
+    .map((element) => element.querySelector('[lang="ka"]')?.textContent ?? '');
+  return [...new Set(characters)];
+}
+
+function startTraining(letterSetLabel?: string) {
   render(<App />);
+  openSettings();
+  if (letterSetLabel) chooseLetterSet(letterSetLabel);
   fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
 }
 
@@ -61,7 +96,54 @@ describe('App', () => {
   it('starts on the home screen', () => {
     render(<App />);
     expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
-    expect(screen.getByRole('button', {name: 'Start Training'})).toBeTruthy();
+    expect(screen.getByRole('button', {name: 'Get Started'})).toBeTruthy();
+  });
+
+  it('opens the settings screen with all letters, and goes back home', () => {
+    render(<App />);
+    openSettings();
+    expect(screen.getByRole('heading', {name: 'Choose Letters'})).toBeTruthy();
+    expect(letterSet()).toBe('All letters');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Back to home'}));
+    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+  });
+
+  it('trains only the chosen letters, and restarts with the same ones', () => {
+    startTraining('Vowels');
+    expect(screen.getByRole('heading', {name: 'Question 1 of 5'})).toBeTruthy();
+    expect(wheelLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
+
+    const played = new Set<string>();
+    for (let i = 0; i < 5; i++) {
+      const target = targetCharacter();
+      played.add(target);
+      fireEvent.click(option(target));
+      fireEvent.click(confirmButton());
+      wait(FEEDBACK_DELAY_MS);
+    }
+    expect([...played].sort()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
+    expect(valueOf('Total exercises')).toBe('5');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Restart Training'}));
+    expect(screen.getByRole('heading', {name: 'Question 1 of 5'})).toBeTruthy();
+    expect(wheelLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
+  });
+
+  it('runs a 2-letter session', () => {
+    startTraining('Familiar P sound');
+    expect(screen.getByRole('heading', {name: 'Question 1 of 2'})).toBeTruthy();
+    expect(wheelLetters()).toEqual(['პ', 'ფ']);
+    fireEvent.click(option(targetCharacter()));
+    fireEvent.click(confirmButton());
+    expect(score()).toBe('+1');
+  });
+
+  it('reopens the settings with the letters of the last session', () => {
+    startTraining('Vowels');
+    fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));
+    openSettings();
+    expect(letterSet()).toBe('Vowels');
   });
 
   it('starts a 33-question session with all letters in the carousel', () => {

@@ -1,5 +1,6 @@
 import {act, renderHook} from '@testing-library/react';
 import {describe, expect, it} from 'vitest';
+import {GEORGIAN_ALPHABET} from '../data/georgianAlphabet.ts';
 import {wrongLetterId} from '../test/letters.ts';
 import {seededRandom} from '../test/seededRandom.ts';
 import {wait, withFakeTimers} from '../test/timers.ts';
@@ -40,7 +41,7 @@ describe('useTrainingSession', () => {
 
   it('advances to the next exercise after a correct answer, once the feedback delay has passed', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, targetId(result.current));
     expect(result.current.state.phase).toBe('feedback');
 
@@ -53,7 +54,7 @@ describe('useTrainingSession', () => {
 
   it('keeps a failed exercise on screen longer, then advances', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, wrongId(result.current));
     answer(result, wrongId(result.current));
     expect(result.current.state.feedback?.kind).toBe('failed');
@@ -66,7 +67,7 @@ describe('useTrainingSession', () => {
 
   it('does not advance after a wrong first attempt', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, wrongId(result.current));
     wait(FAILED_FEEDBACK_DELAY_MS * 2);
     expect(result.current.state.phase).toBe('answering');
@@ -76,7 +77,7 @@ describe('useTrainingSession', () => {
 
   it('advances exactly one exercise per resolved answer', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, targetId(result.current));
     act(() => result.current.submit());
     wait(FEEDBACK_DELAY_MS * 5);
@@ -87,7 +88,7 @@ describe('useTrainingSession', () => {
 
   it('opens the results after the final exercise', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     for (let i = 0; i < 33; i++) {
       answer(result, targetId(result.current));
       wait(FEEDBACK_DELAY_MS);
@@ -98,13 +99,27 @@ describe('useTrainingSession', () => {
     expect(result.current.state.phase).toBe('finished');
   });
 
+  it('asks only the chosen letters, each once, then opens the results', () => {
+    const {result} = renderSession();
+    const chosen = GEORGIAN_ALPHABET.slice(0, 3);
+    act(() => result.current.start(chosen));
+    const asked: string[] = [];
+    for (let i = 0; i < chosen.length; i++) {
+      asked.push(targetId(result.current));
+      answer(result, targetId(result.current));
+      wait(FEEDBACK_DELAY_MS);
+    }
+    expect(asked.sort()).toEqual(chosen.map((letter) => letter.id).sort());
+    expect(result.current.state.phase).toBe('finished');
+  });
+
   it('restarting while feedback is showing cancels the pending advance', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, targetId(result.current));
     const firstOrder = result.current.state.exercises;
 
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     wait(FAILED_FEEDBACK_DELAY_MS * 2);
     expect(result.current.state.phase).toBe('answering');
     expect(result.current.state.index).toBe(0);
@@ -114,7 +129,7 @@ describe('useTrainingSession', () => {
 
   it('exiting while feedback is showing stays on the home screen', () => {
     const {result} = renderSession();
-    act(() => result.current.start());
+    act(() => result.current.start(GEORGIAN_ALPHABET));
     answer(result, targetId(result.current));
     act(() => result.current.exit());
     wait(FAILED_FEEDBACK_DELAY_MS * 2);

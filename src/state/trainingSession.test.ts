@@ -84,8 +84,20 @@ describe('trainingReducer', () => {
     expect(state.sessionId).toBe(1);
   });
 
-  it('ignores a start with no exercises', () => {
+  it('ignores a start with fewer than 2 exercises', () => {
     expect(start([])).toBe(initialTrainingState);
+    expect(start(ALPHABETICAL.slice(0, 1))).toBe(initialTrainingState);
+  });
+
+  it('starts a session with only the given letters', () => {
+    const vowels = GEORGIAN_ALPHABET.filter((letter) =>
+      'აეიოუ'.includes(letter.character),
+    );
+    const state = start(createExercises(vowels, seededRandom(2)));
+    expect(state.phase).toBe('answering');
+    expect(
+      state.exercises.map((exercise) => exercise.targetLetterId).sort(),
+    ).toEqual(vowels.map((letter) => letter.id).sort());
   });
 
   it('adds 1 point for a correct first attempt and advances', () => {

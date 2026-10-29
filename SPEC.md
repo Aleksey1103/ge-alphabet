@@ -112,6 +112,8 @@ The settings screen sets the letters for the next training session.
 
 Display:
 
+- A back button that returns to the main screen. Changes the user hasn't started
+  a session with are dropped.
 - A title, such as "Choose Letters".
 - A select with the letter presets listed below.
 - A letter picker with all 33 letters.
@@ -195,7 +197,10 @@ letter sound.
 - Display the letters in a vertical, iOS-style picker wheel: the letters sit on
   a 3D drum that turns behind a fixed selection band in the middle.
 - The wheel offers only the session's letters, in alphabetical order. It must
-  work with as few as 2 letters.
+  work with as few as 2 letters. When there are too few letters to fill the
+  drum, repeat them around it so it still loops smoothly. Screen readers
+  announce each letter by its position in the session's set, such as "პ, 1 of
+  2".
 - The wheel loops: after the session's last letter it continues with its first
   letter, in both directions.
 - Users spin the wheel by swiping or dragging vertically. It coasts with
@@ -573,6 +578,7 @@ At minimum, verify:
     or to "Custom" without changing the checked letters.
 19. "Start Training" is disabled while fewer than 2 letters are checked.
 20. The training wheel offers only the session's letters.
+21. The settings screen's back button returns to the main screen.
 
 Use Vitest and React Testing Library if a test framework is needed.
 

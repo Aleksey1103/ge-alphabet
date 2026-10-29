@@ -1,5 +1,6 @@
 import AudioPlayer from '../../components/AudioPlayer/index.ts';
 import FeedbackMessage from '../../components/FeedbackMessage/index.ts';
+import IconButton from '../../components/IconButton/index.ts';
 import LetterCarousel from '../../components/LetterCarousel/index.ts';
 import PrimaryButton from '../../components/PrimaryButton/index.ts';
 import ProgressBar from '../../components/ProgressBar/index.ts';
@@ -40,22 +41,7 @@ export default function TrainingScreen({
         className="grid grid-cols-[var(--spacing-touch)_1fr_auto] items-center
           gap-gutter"
       >
-        <button
-          type="button"
-          className="grid size-touch place-items-center rounded-full bg-surface
-            text-muted"
-          onClick={exit}
-          aria-label="Exit training"
-        >
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-            <path
-              d="M6 6l12 12M18 6L6 18"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        </button>
+        <IconButton icon="close" label="Exit training" onClick={exit} />
         <ScreenHeading
           className="text-center text-[clamp(0.875rem,4.2vw,1rem)]
             whitespace-nowrap"

@@ -1,6 +1,7 @@
 import {act, fireEvent, render, screen} from '@testing-library/react';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 import {GEORGIAN_ALPHABET} from '../../data/georgianAlphabet.ts';
+import type {GeorgianLetter} from '../../types/alphabet.ts';
 import {wrap, WHEEL_ITEM_ANGLE} from '../../utils/picker.ts';
 import LetterCarousel from './LetterCarousel.tsx';
 
@@ -32,7 +33,10 @@ const embla = vi.hoisted(() => {
     },
     selectedScrollSnap: () => api.snap,
     scrollProgress: () => api.snap / api.slideNodes().length,
-    scrollTo: vi.fn(),
+    // Like Embla, the wheel's position is the target as soon as it's told to turn.
+    scrollTo: vi.fn((index: number) => {
+      api.snap = index;
+    }),
     slideNodes: () => [
       ...document.querySelectorAll<HTMLElement>('[role=option]'),
     ],
@@ -54,16 +58,18 @@ const count = letters.length;
 const last = count - 1;
 
 function renderPicker({
+  pickerLetters = letters,
   selectable = () => true,
   selectedLetterId = null,
 }: {
+  pickerLetters?: readonly GeorgianLetter[];
   selectable?: (letterId: string) => boolean;
   selectedLetterId?: string | null;
 } = {}) {
   const onSelect = vi.fn();
   const onDeselect = vi.fn();
   const props = {
-    letters,
+    letters: pickerLetters,
     getStatus: () => 'idle' as const,
     isSelectable: selectable,
     selectedLetterId,
@@ -81,7 +87,7 @@ function renderPicker({
  */
 function turnBy(by: number) {
   for (let i = 0; i < Math.abs(by); i++) {
-    embla.snap = wrap(embla.snap + Math.sign(by), count);
+    embla.snap = wrap(embla.snap + Math.sign(by), embla.slideNodes().length);
     embla.emit('scroll');
   }
 }
@@ -245,5 +251,88 @@ describe('LetterCarousel', () => {
     expect(
       screen.getAllByRole('option').filter((element) => element.tabIndex === 0),
     ).toHaveLength(1);
+  });
+});
+
+describe('LetterCarousel with a short set of letters', () => {
+  // პ and ფ, repeated round the wheel: slide i shows პ when i is even and ფ when it's odd.
+  const pair = GEORGIAN_ALPHABET.filter((letter) =>
+    ['პ', 'ფ'].includes(letter.character),
+  );
+  const [p, ph] = pair;
+
+  function slide(index: number): HTMLElement {
+    return screen.getAllByRole('option')[index];
+  }
+
+  it('repeats the letters round the wheel and announces each by its place in the set', () => {
+    renderPicker({pickerLetters: pair});
+    const options = screen.getAllByRole('option');
+    expect(options).toHaveLength(10);
+    expect(options.map((option) => option.textContent).join('')).toBe(
+      'პფპფპფპფპფ',
+    );
+    expect(slide(3).getAttribute('aria-setsize')).toBe('2');
+    expect(slide(3).getAttribute('aria-posinset')).toBe('2');
+  });
+
+  it('selects the letter it stops on, round the end of the loop too', () => {
+    const {onSelect} = renderPicker({pickerLetters: pair});
+    spin(0, 3);
+    expect(onSelect).toHaveBeenLastCalledWith(ph.id);
+    // From the last slide, two on: past the end to slide 1.
+    spin(9, 2);
+    expect(onSelect).toHaveBeenLastCalledWith(ph.id);
+    expect(embla.snap).toBe(1);
+  });
+
+  it('rolls past the rejected letter to the next copy of the other one', () => {
+    const {onSelect} = renderPicker({
+      pickerLetters: pair,
+      selectable: (id) => id !== p.id,
+    });
+    spin(1, 1);
+    expect(onSelect).toHaveBeenLastCalledWith(ph.id);
+    expect(embla.scrollTo).toHaveBeenLastCalledWith(3, false);
+  });
+
+  it('turns to the tapped copy, not just any copy of its letter', () => {
+    const {onSelect, rerender, props} = renderPicker({pickerLetters: pair});
+    fireEvent.click(slide(9));
+    expect(onSelect).toHaveBeenCalledExactlyOnceWith(ph.id);
+    rerender(
+      <LetterCarousel
+        {...props}
+        selectedLetterId={ph.id}
+        centeredLetterId={ph.id}
+      />,
+    );
+    expect(embla.scrollTo).toHaveBeenLastCalledWith(9, false);
+    expect(slide(9).getAttribute('aria-selected')).toBe('true');
+    expect(slide(1).getAttribute('aria-selected')).toBe('false');
+    expect(slide(9).tabIndex).toBe(0);
+  });
+
+  it('moves copy by copy with the arrow keys, in the direction pressed', () => {
+    const {onSelect, rerender, props} = renderPicker({
+      pickerLetters: pair,
+      selectedLetterId: p.id,
+    });
+    const listbox = screen.getByRole('listbox', {name: 'Georgian letters'});
+    fireEvent.keyDown(listbox, {key: 'ArrowUp'});
+    expect(onSelect).toHaveBeenLastCalledWith(ph.id);
+    expect(embla.snap).toBe(9);
+    expect(document.activeElement).toBe(slide(9));
+
+    rerender(
+      <LetterCarousel
+        {...props}
+        selectedLetterId={ph.id}
+        centeredLetterId={ph.id}
+      />,
+    );
+    fireEvent.keyDown(listbox, {key: 'ArrowUp'});
+    expect(onSelect).toHaveBeenLastCalledWith(p.id);
+    expect(embla.snap).toBe(8);
   });
 });

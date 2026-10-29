@@ -8,8 +8,10 @@ import {cx} from '../../utils/classNames.ts';
 import {
   findPickable,
   loopOffset,
+  nearestSlide,
   wheelItemAngle,
   wheelRadius,
+  wheelSlideCount,
 } from '../../utils/picker.ts';
 
 type EmblaApi = NonNullable<UseEmblaCarouselType[1]>;
@@ -31,8 +33,9 @@ type LetterCarouselProps = {
 
 /**
  * Embla drags, coasts (`dragFree`) and loops the wheel. Every spin still stops
- * on a letter (see `stopOnLetter` below). The letters never change, and focus
- * is handled here, so neither is watched.
+ * on a letter (see `stopOnLetter` below). The letters never change while the
+ * wheel is mounted (each session mounts a new one), and focus is handled here,
+ * so neither is watched.
  */
 const EMBLA_OPTIONS = {
   axis: 'y',
@@ -59,7 +62,9 @@ const BADGES: Partial<
 
 /**
  * An iOS-style picker wheel that loops through the letters. The letter it stops
- * on is selected.
+ * on is selected. A short set of letters is repeated round the wheel (see
+ * `wheelSlideCount`), so it works with slides: slide `i` shows letter
+ * `i % letters.length`.
  */
 export default function LetterCarousel({
   letters,
@@ -75,10 +80,28 @@ export default function LetterCarousel({
     ...EMBLA_OPTIONS,
     watchDrag: canSpin,
   });
-  /** The letter in the selection band, as of the last time the wheel stopped. */
-  const [restingIndex, setRestingIndex] = useState(0);
-  const tabStopId =
-    selectedLetterId ?? centeredLetterId ?? letters[restingIndex]?.id;
+  const slides = Array.from(
+    {length: wheelSlideCount(letters.length)},
+    (_, index) => letters[index % letters.length],
+  );
+  /**
+   * The slide in the selection band when the wheel last stopped, or the one
+   * it's turning to after a tap or a key press.
+   */
+  const [bandIndex, setBandIndex] = useState(0);
+  const tabStopLetterId = selectedLetterId ?? centeredLetterId;
+  const tabStopLetterIndex = letters.findIndex(
+    (letter) => letter.id === tabStopLetterId,
+  );
+  const tabStopIndex =
+    tabStopLetterIndex < 0
+      ? bandIndex
+      : nearestSlide(
+          bandIndex,
+          tabStopLetterIndex,
+          letters.length,
+          slides.length,
+        );
 
   // Embla measures and scrolls the slides, but instead of sliding them, the wheel turns them round
   // a 3D drum. This follows Embla's iOS picker example, which uses these internal engine parts.
@@ -147,12 +170,15 @@ export default function LetterCarousel({
   const startSpin = useEffectEvent(() => onDeselect());
   const finishSpin = useEffectEvent((api: EmblaApi, step: 1 | -1) => {
     const index = api.selectedScrollSnap();
-    const picked = findPickable(index, step, letters.length, (i) =>
-      isSelectable(letters[i].id),
+    const picked = findPickable(index, step, slides.length, (i) =>
+      isSelectable(slides[i].id),
     );
     if (picked === null) return;
-    onSelect(letters[picked].id);
-    if (picked !== index) api.scrollTo(picked, prefersReducedMotion());
+    onSelect(slides[picked].id);
+    if (picked !== index) {
+      setBandIndex(picked);
+      api.scrollTo(picked, prefersReducedMotion());
+    }
   });
 
   useEffect(() => {
@@ -191,7 +217,7 @@ export default function LetterCarousel({
       if (spin === 'pressed') spin = null;
     };
     const settle = (api: EmblaApi) => {
-      setRestingIndex(api.selectedScrollSnap());
+      setBandIndex(api.selectedScrollSnap());
       turning = false;
       if (spin === 'spinning') finishSpin(api, direction);
       spin = null;
@@ -219,44 +245,61 @@ export default function LetterCarousel({
     };
   }, [emblaApi]);
 
-  // Turn the wheel to the selection, or to the answer revealed after a failed exercise.
+  // Turn the wheel to the selection, or to the answer revealed after a failed exercise: to the
+  // copy of the letter nearest to where the wheel is (or is already turning to).
+  const slideCount = slides.length;
   useEffect(() => {
     const index = letters.findIndex((letter) => letter.id === centeredLetterId);
     if (!emblaApi || index < 0) return;
-    emblaApi.scrollTo(index, prefersReducedMotion());
-  }, [emblaApi, centeredLetterId, letters]);
+    const slide = nearestSlide(
+      emblaApi.selectedScrollSnap(),
+      index,
+      letters.length,
+      slideCount,
+    );
+    emblaApi.scrollTo(slide, prefersReducedMotion());
+  }, [emblaApi, centeredLetterId, letters, slideCount]);
+
+  /** Selects the letter on this slide and turns the wheel to that very slide. */
+  function pickSlide(index: number) {
+    setBandIndex(index);
+    emblaApi?.scrollTo(index, prefersReducedMotion());
+    onSelect(slides[index].id);
+  }
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-    const count = letters.length;
-    const current = Math.max(
-      letters.findIndex((letter) => letter.id === tabStopId),
-      0,
-    );
-    const canPick = (index: number) => isSelectable(letters[index].id);
+    const canPickLetter = (index: number) => isSelectable(letters[index].id);
+    const canPickSlide = (index: number) => isSelectable(slides[index].id);
+    // Home and End go to the first and last letter, whichever copy is nearest.
+    const nearestCopy = (letterIndex: number | null) =>
+      letterIndex === null
+        ? null
+        : nearestSlide(tabStopIndex, letterIndex, letters.length, slideCount);
     let next: number | null;
     switch (event.key) {
       case 'ArrowDown':
       case 'ArrowRight':
-        next = findPickable(current + 1, 1, count, canPick);
+        next = findPickable(tabStopIndex + 1, 1, slideCount, canPickSlide);
         break;
       case 'ArrowUp':
       case 'ArrowLeft':
-        next = findPickable(current - 1, -1, count, canPick);
+        next = findPickable(tabStopIndex - 1, -1, slideCount, canPickSlide);
         break;
       case 'Home':
-        next = findPickable(0, 1, count, canPick);
+        next = nearestCopy(findPickable(0, 1, letters.length, canPickLetter));
         break;
       case 'End':
-        next = findPickable(count - 1, -1, count, canPick);
+        next = nearestCopy(
+          findPickable(letters.length - 1, -1, letters.length, canPickLetter),
+        );
         break;
       default:
         return;
     }
     event.preventDefault();
     if (next === null) return;
-    const letter = letters[next];
-    onSelect(letter.id);
-    findOption(event.currentTarget, letter.id)?.focus({preventScroll: true});
+    pickSlide(next);
+    findOption(event.currentTarget, next)?.focus({preventScroll: true});
   }
 
   return (
@@ -294,19 +337,25 @@ export default function LetterCarousel({
             aria-disabled={!canSpin}
             onKeyDown={handleKeyDown}
           >
-            {letters.map((letter) => {
+            {slides.map((letter, index) => {
               const status = getStatus(letter.id);
               const badge = BADGES[status];
               const canSelect = isSelectable(letter.id);
               return (
                 <button
-                  key={letter.id}
+                  // The slides never change while the wheel is mounted.
+                  key={index}
                   type="button"
                   role="option"
                   data-letter-id={letter.id}
-                  aria-selected={letter.id === selectedLetterId}
+                  // Copies of a letter are announced by its place in the set ("პ, 1 of 2").
+                  aria-setsize={letters.length}
+                  aria-posinset={(index % letters.length) + 1}
+                  aria-selected={
+                    letter.id === selectedLetterId && index === tabStopIndex
+                  }
                   aria-disabled={!canSelect}
-                  tabIndex={letter.id === tabStopId ? 0 : -1}
+                  tabIndex={index === tabStopIndex ? 0 : -1}
                   className={cx(
                     `relative flex size-full items-center justify-center
                     rounded-2xl border-2 opacity-0 backface-hidden
@@ -318,7 +367,7 @@ export default function LetterCarousel({
                       'hover:not-aria-disabled:border-line',
                   )}
                   onClick={() => {
-                    if (canSelect) onSelect(letter.id);
+                    if (canSelect) pickSlide(index);
                   }}
                 >
                   <span
@@ -352,11 +401,8 @@ export default function LetterCarousel({
   );
 }
 
-function findOption(list: HTMLElement, letterId: string): HTMLElement | null {
-  const options = list.querySelectorAll<HTMLElement>('[data-letter-id]');
-  return (
-    [...options].find((option) => option.dataset.letterId === letterId) ?? null
-  );
+function findOption(list: HTMLElement, index: number): HTMLElement | null {
+  return list.querySelectorAll<HTMLElement>('[role=option]')[index] ?? null;
 }
 
 function prefersReducedMotion(): boolean {

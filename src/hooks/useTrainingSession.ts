@@ -1,11 +1,12 @@
 import {useEffect, useReducer} from 'react';
-import {GEORGIAN_ALPHABET, getLetterById} from '../data/georgianAlphabet.ts';
+import {getLetterById} from '../data/georgianAlphabet.ts';
 import {
   createExercises,
   getCurrentExercise,
   initialTrainingState,
   trainingReducer,
 } from '../state/trainingSession.ts';
+import type {GeorgianLetter} from '../types/alphabet.ts';
 import type {RandomSource} from '../utils/shuffle.ts';
 
 /**
@@ -44,11 +45,9 @@ export function useTrainingSession({random}: {random?: RandomSource} = {}) {
   return {
     state,
     currentLetter,
-    start: () =>
-      dispatch({
-        type: 'start',
-        exercises: createExercises(GEORGIAN_ALPHABET, random),
-      }),
+    /** Starts a new session with these letters, in a new random order. */
+    start: (letters: readonly GeorgianLetter[]) =>
+      dispatch({type: 'start', exercises: createExercises(letters, random)}),
     select: (letterId: string) => dispatch({type: 'select', letterId}),
     deselect: () => dispatch({type: 'deselect'}),
     submit: () => dispatch({type: 'submit'}),
