@@ -1,0 +1,8 @@
+#!/bin/sh
+# Runs the same checks as CI before every push, so a broken build never
+# reaches GitHub Pages. Checks the working tree, including uncommitted changes.
+set -e
+
+npm run lint
+npm test
+npm run build

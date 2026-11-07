@@ -45,6 +45,9 @@ A React app for learning the Georgian alphabet (Mkhedruli script).
 - `npm run build`: type-check (`tsc -b`), then run the production build
 - `npm run lint`: run ESLint
 - `npm test`: run the Vitest tests once (`npm run test:watch` to keep watching)
+- A pre-push Git hook (`.githooks/pre-push`) runs lint, test and build, and
+  blocks the push if any fails. `npm install` enables it by pointing
+  `core.hooksPath` at `.githooks/`.
 
 ## Before finishing a task
 
