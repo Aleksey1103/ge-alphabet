@@ -254,6 +254,9 @@ Divide the available screen height into two vertically stacked sections.
   speed.
 - Show a visual indication while audio is playing, on the button that started
   the playback.
+- Disable both playback buttons while the feedback for a resolved exercise is
+  shown (a correct answer, or a failed exercise). After a wrong first answer
+  they stay enabled, so the user can listen again before the second attempt.
 - Never automatically play the next sound before the previous exercise has been
   resolved.
 
@@ -674,6 +677,8 @@ At minimum, verify:
 29. The language switcher changes the interface text on every screen, and the
     choice is saved.
 30. Russian letter counts use the correct plural forms.
+31. The playback buttons are disabled while a resolved exercise's feedback is
+    shown, and enabled for both attempts.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
