@@ -91,8 +91,10 @@ Design guidelines:
 
 ## 5. Application Screens
 
-Implement four main screens. The user moves through them in this order: main
-screen, settings screen, training screen, results screen.
+Implement five main screens. The user moves through them in this order: main
+screen, settings screen, learning screen, training screen, results screen. The
+learning screen is optional: the settings screen can also start training
+directly.
 
 ### 5.1. Main Screen
 
@@ -118,7 +120,8 @@ Display:
 - A select with the letter presets listed below.
 - A letter picker with all 33 letters.
 - The number of checked letters, such as "5 letters selected".
-- A primary "Start Training" button.
+- A secondary "Learn Letters" button.
+- A primary "Start Training" button below it.
 
 **Letter presets**
 
@@ -162,16 +165,56 @@ shortcut for filling the picker.
   way leaves the checked letters as they are.
 - The first time the screen opens, "All letters" is selected and all 33 letters
   are checked. Later, the screen opens with the letters of the last started
-  session.
+  session. Returning from the learning screen with its back button keeps the
+  letters as they were checked.
+
+**Learn and start buttons**
+
+- Clicking "Learn Letters" opens the learning screen with the checked letters.
+  It doesn't start a session.
+- Clicking "Start Training" creates a new training session from the checked
+  letters and navigates to the training screen.
+- Disable both buttons when fewer than 2 letters are checked, and show a short
+  hint, such as "Choose at least 2 letters".
+
+### 5.3. Learning Screen
+
+The learning screen lets the user listen to the letters checked on the settings
+screen before training with them.
+
+Display:
+
+- A back button that returns to the settings screen, with the same letters
+  checked.
+- A title, such as "Learn Letters".
+- A close button (×) that returns to the main screen. As with the settings
+  screen's back button, letters the user hasn't started a session with are
+  dropped.
+- A table of the checked letters, one row per letter.
+- A primary "Start Training" button below the table.
+
+**Letter table**
+
+- The table has two columns: the letter, and a button that plays its sound.
+- The rows list the checked letters in alphabetical order, and no others.
+- When the rows don't fit the screen, the table scrolls, while the header and
+  the "Start Training" button stay in place.
+- Each play button plays its letter's recording at normal speed, as many times
+  as the user likes. Its accessible label names the letter, such as "Play ა".
+- Only one sound plays at a time. Starting a sound stops the one that's playing.
+- Show a visual indication on the button whose sound is playing.
+- If a letter's recording is missing, disable its button and say the sound is
+  missing. If a recording can't be loaded or played, show a short message, such
+  as "The sound for ა couldn't be played. Tap it to try again.", and let the
+  user retry with the same button.
 
 **Start button**
 
-- Clicking "Start Training" creates a new training session from the checked
-  letters and navigates to the training screen.
-- Disable the button when fewer than 2 letters are checked, and show a short
-  hint, such as "Choose at least 2 letters".
+Clicking "Start Training" creates a new training session from the screen's
+letters and navigates to the training screen, as the settings screen's button
+does.
 
-### 5.3. Training Screen
+### 5.4. Training Screen
 
 Divide the available screen height into two vertically stacked sections.
 
@@ -226,7 +269,7 @@ The upper and lower sections should remain visually distinct and usable on small
 screens. Use a flexible layout rather than fixed heights that could cause
 content to overflow.
 
-### 5.4. Results Screen
+### 5.5. Results Screen
 
 When all exercises have been completed, display:
 
@@ -543,7 +586,9 @@ Handle the following cases:
 
 - Audio file is missing or cannot be loaded.
 - Audio playback is rejected by the browser.
-- The user attempts to start a session with fewer than 2 letters checked.
+- The user attempts to start a session or open the learning screen with fewer
+  than 2 letters checked.
+- A letter's recording is missing or fails to play on the learning screen.
 - The user attempts to confirm without selecting a letter.
 - The user rapidly taps the confirmation button.
 - The user restarts a session while feedback is visible.
@@ -587,6 +632,13 @@ At minimum, verify:
 21. The settings screen's back button returns to the main screen.
 22. "New Session" on the results screen opens the settings screen with the
     finished session's letters, and its exit button returns to the main screen.
+23. "Learn Letters" is disabled while fewer than 2 letters are checked, and
+    opens the learning screen with the checked letters.
+24. The learning screen lists exactly its letters in alphabetical order, and
+    each row's button plays that letter's recording, one sound at a time.
+25. The learning screen's back button returns to the settings screen with the
+    same letters checked, its close button returns to the main screen, and its
+    "Start Training" button starts a session with its letters.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
@@ -621,9 +673,10 @@ changes that preserve useful existing work.
 
 The application is complete when:
 
-- All four screens are implemented.
-- The settings screen's presets, letter picker and start button work as
+- All five screens are implemented.
+- The settings screen's presets, letter picker, learn and start buttons work as
   specified.
+- The learning screen lists the chosen letters and plays each one's recording.
 - The interface follows the dark blue mobile-first design.
 - The application remains narrow and centered on desktop screens.
 - The vertical carousel supports selecting Georgian letters.
