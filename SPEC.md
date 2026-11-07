@@ -96,10 +96,25 @@ screen, settings screen, learning screen, training screen, results screen. The
 learning screen is optional: the settings screen can also start training
 directly.
 
+**Interface language**
+
+- All interface text is available in English and Russian: titles, buttons,
+  messages, preset names and accessible labels. Georgian letters and Georgian
+  text stay as they are.
+- On the first visit, the app uses Russian if the browser prefers Russian, and
+  English otherwise. The language the user chooses is saved in the browser and
+  used on later visits.
+- Switching the language changes only the text. It keeps the checked letters.
+- The page's `lang` attribute and title follow the chosen language.
+- Russian text uses the correct plural forms, such as "1 буква", "2 буквы" and
+  "5 букв".
+
 ### 5.1. Main Screen
 
 Display:
 
+- A first line with the Georgian name of the alphabet, "ქართული ანბანი", and the
+  language switcher at its end.
 - Application title, such as "Learn Georgian".
 - A prominent Georgian alphabet visual element.
 - A short description explaining that the user will hear sounds and select the
@@ -107,6 +122,12 @@ Display:
 - A primary button, such as "Get Started".
 
 Clicking the button must navigate to the settings screen.
+
+**Language switcher**
+
+- Two segmented buttons, "EN" and "RU". The active language is highlighted and
+  exposed to screen readers as pressed.
+- Tapping the other language switches the whole interface to it.
 
 ### 5.2. Settings Screen
 
@@ -126,19 +147,19 @@ Display:
 
 The select lists these presets in this order:
 
-| Preset             | Letters                                                      |
-| ------------------ | ------------------------------------------------------------ |
-| All letters        | All 33 letters                                               |
-| Vowels             | ა, ე, ი, ო, უ                                                |
-| Distinct sounds    | ა, ბ, გ, დ, ე, ვ, ზ, ი, ლ, მ, ნ, ო, ჟ, რ, ს, უ, ღ, შ, ძ, ჯ   |
-| P twins · პ ფ      | პ, ფ                                                         |
-| T twins · თ ტ      | თ, ტ                                                         |
-| Ch twins · ჩ ჭ     | ჩ, ჭ                                                         |
-| Ts twins · ც წ     | ც, წ                                                         |
-| H twins · ხ ჰ      | ხ, ჰ                                                         |
-| K triplets · კ ქ ყ | კ, ქ, ყ                                                      |
-| All twins          | თ, კ, პ, ტ, ფ, ქ, ყ, ჩ, ც, წ, ჭ, ხ, ჰ (the six groups above) |
-| Custom             | None                                                         |
+| Preset             | Russian name      | Letters                                                      |
+| ------------------ | ----------------- | ------------------------------------------------------------ |
+| All letters        | Все буквы         | All 33 letters                                               |
+| Vowels             | Гласные           | ა, ე, ი, ო, უ                                                |
+| Distinct sounds    | Непохожие звуки   | ა, ბ, გ, დ, ე, ვ, ზ, ი, ლ, მ, ნ, ო, ჟ, რ, ს, უ, ღ, შ, ძ, ჯ   |
+| P twins · პ ფ      | Пара П · პ ფ      | პ, ფ                                                         |
+| T twins · თ ტ      | Пара Т · თ ტ      | თ, ტ                                                         |
+| Ch twins · ჩ ჭ     | Пара Ч · ჩ ჭ      | ჩ, ჭ                                                         |
+| Ts twins · ც წ     | Пара Ц · ც წ      | ც, წ                                                         |
+| H twins · ხ ჰ      | Пара Х · ხ ჰ      | ხ, ჰ                                                         |
+| K triplets · კ ქ ყ | Тройка К · კ ქ ყ  | კ, ქ, ყ                                                      |
+| All twins          | Все пары и тройки | თ, კ, პ, ტ, ფ, ქ, ყ, ჩ, ც, წ, ჭ, ხ, ჰ (the six groups above) |
+| Custom             | Свой набор        | None                                                         |
 
 The twins and triplets are letters that sound alike to an English speaker. Their
 labels end with their letters, as shown. "Distinct sounds" and "All twins" share
@@ -569,6 +590,9 @@ Implementation guidelines:
 - Clean up audio resources and timers when components unmount or exercises
   change.
 - Keep the console free of avoidable warnings and errors.
+- Keep all interface text in a typed messages module, with an English and a
+  Russian dictionary of the same shape, so a missing translation fails the type
+  check. Components read text from it and never hard-code it.
 
 ## 11. Accessibility and Mobile Interaction
 
@@ -645,6 +669,11 @@ At minimum, verify:
 26. "Clear" unchecks every letter, and is disabled while none are checked.
 27. After going to the main screen from any screen, the settings screen opens
     with "All letters" again.
+28. The app starts in Russian when the browser prefers Russian and in English
+    otherwise, and a saved choice wins over both.
+29. The language switcher changes the interface text on every screen, and the
+    choice is saved.
+30. Russian letter counts use the correct plural forms.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
@@ -680,6 +709,8 @@ changes that preserve useful existing work.
 The application is complete when:
 
 - All five screens are implemented.
+- The interface is available in English and Russian, switchable on the main
+  screen.
 - The settings screen's presets, letter picker, clear, learn and start buttons
   work as specified.
 - The learning screen lists the chosen letters and plays each one's recording.
