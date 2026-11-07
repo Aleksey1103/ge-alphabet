@@ -101,6 +101,7 @@ export default function SettingsScreen({
         onToggle={(letterId) =>
           setLetterIds((ids) => toggleLetter(ids, letterId))
         }
+        onClear={() => setLetterIds([])}
       />
 
       <div className="mt-auto flex flex-col gap-tight">

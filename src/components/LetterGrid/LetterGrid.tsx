@@ -5,17 +5,22 @@ type LetterGridProps = {
   letters: readonly GeorgianLetter[];
   checkedIds: readonly string[];
   onToggle: (letterId: string) => void;
+  /** Unchecks every letter. */
+  onClear: () => void;
 };
 
 /**
- * Every letter as a toggle tile. A checked tile is marked with a tick as well
- * as color.
+ * Every letter as a toggle tile, followed by a Clear button. A checked tile is
+ * marked with a tick as well as color.
  */
 export default function LetterGrid({
   letters,
   checkedIds,
   onToggle,
+  onClear,
 }: LetterGridProps) {
+  const hasChecked = checkedIds.length > 0;
+
   return (
     <ul
       className="grid
@@ -55,6 +60,22 @@ export default function LetterGrid({
           </li>
         );
       })}
+      {/* Two tiles wide, at the end of the last row (or a new row when it's full). */}
+      <li className="col-[span_2/-1]">
+        {/* aria-disabled keeps focus on the button once it has cleared everything. */}
+        <button
+          type="button"
+          className="size-full rounded-xl border-2 border-line text-sm
+            font-semibold text-accent hover:not-aria-disabled:bg-surface-2
+            aria-disabled:cursor-not-allowed aria-disabled:opacity-45"
+          aria-disabled={!hasChecked}
+          onClick={() => {
+            if (hasChecked) onClear();
+          }}
+        >
+          Clear
+        </button>
+      </li>
     </ul>
   );
 }

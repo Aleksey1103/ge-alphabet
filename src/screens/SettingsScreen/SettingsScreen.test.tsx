@@ -70,6 +70,21 @@ describe('SettingsScreen', () => {
     expect(screen.getByRole('status').textContent).toBe('0 letters selected');
   });
 
+  it('clears every letter, then disables Clear', () => {
+    renderSettings(presetLetterIds('vowels'));
+    const clear = screen.getByRole('button', {name: 'Clear'});
+    expect(clear.getAttribute('aria-disabled')).toBe('false');
+
+    fireEvent.click(clear);
+    expect(screen.queryAllByRole('button', {pressed: true})).toHaveLength(0);
+    expect(select().value).toBe('custom');
+    expect(screen.getByRole('status').textContent).toBe('0 letters selected');
+    expect(clear.getAttribute('aria-disabled')).toBe('true');
+
+    fireEvent.click(tile('ბ'));
+    expect(clear.getAttribute('aria-disabled')).toBe('false');
+  });
+
   it('toggles one letter at a time and shows the matching preset or Custom', () => {
     renderSettings(presetLetterIds('vowels'));
     fireEvent.click(tile('უ'));
