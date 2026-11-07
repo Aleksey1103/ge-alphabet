@@ -114,8 +114,7 @@ The settings screen sets the letters for the next training session.
 
 Display:
 
-- A back button that returns to the main screen. Changes the user hasn't started
-  a session with are dropped.
+- A back button that returns to the main screen.
 - A title, such as "Choose Letters".
 - A select with the letter presets listed below.
 - A letter picker with all 33 letters.
@@ -150,6 +149,8 @@ no letters, and together they cover all 33.
 - Display all 33 letters in alphabetical order as a grid of toggle tiles that
   fits the container without horizontal scrolling.
 - Tapping a tile checks or unchecks that letter and changes no other letter.
+- After the last tile, a "Clear" button two tiles wide ends the grid's last row,
+  or starts a new row when the last row has no room.
 - Make checked tiles clearly distinct, with an icon or other mark as well as
   color, and expose each tile's checked state to screen readers.
 
@@ -160,13 +161,17 @@ shortcut for filling the picker.
 
 - Choosing a preset checks exactly its letters and unchecks all others.
 - Choosing "Custom" unchecks every letter.
+- Clicking "Clear" unchecks every letter too, and the select shows "Custom".
+  Disable the button while no letter is checked.
 - After every change, the select shows the preset whose letters exactly match
   the checked letters, or "Custom" when none match. Switching to "Custom" this
   way leaves the checked letters as they are.
-- The first time the screen opens, "All letters" is selected and all 33 letters
-  are checked. Later, the screen opens with the letters of the last started
-  session. Returning from the learning screen with its back button keeps the
-  letters as they were checked.
+- When the screen opens from the main screen, "All letters" is selected and all
+  33 letters are checked. Going to the main screen, from any screen, drops the
+  chosen letters.
+- "New Session" on the results screen opens the screen with the finished
+  session's letters, and returning from the learning screen with its back button
+  keeps the letters as they were checked.
 
 **Learn and start buttons**
 
@@ -187,9 +192,7 @@ Display:
 - A back button that returns to the settings screen, with the same letters
   checked.
 - A title, such as "Learn Letters".
-- A close button (×) that returns to the main screen. As with the settings
-  screen's back button, letters the user hasn't started a session with are
-  dropped.
+- A close button (×) that returns to the main screen.
 - A table of the checked letters, one row per letter.
 - A primary "Start Training" button below the table.
 
@@ -639,6 +642,9 @@ At minimum, verify:
 25. The learning screen's back button returns to the settings screen with the
     same letters checked, its close button returns to the main screen, and its
     "Start Training" button starts a session with its letters.
+26. "Clear" unchecks every letter, and is disabled while none are checked.
+27. After going to the main screen from any screen, the settings screen opens
+    with "All letters" again.
 
 Use Vitest and React Testing Library if a test framework is needed.
 
@@ -674,8 +680,8 @@ changes that preserve useful existing work.
 The application is complete when:
 
 - All five screens are implemented.
-- The settings screen's presets, letter picker, learn and start buttons work as
-  specified.
+- The settings screen's presets, letter picker, clear, learn and start buttons
+  work as specified.
 - The learning screen lists the chosen letters and plays each one's recording.
 - The interface follows the dark blue mobile-first design.
 - The application remains narrow and centered on desktop screens.
