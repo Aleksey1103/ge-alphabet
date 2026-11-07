@@ -24,11 +24,14 @@ export type LetterPresetId =
   | 'all-twins'
   | 'custom';
 
-/** A ready-made letter set on the settings screen. */
+/**
+ * A ready-made letter set on the settings screen. Its name, in each language,
+ * is in the messages module.
+ */
 export type LetterPreset = {
   id: LetterPresetId;
-  /** The name shown in the preset select. */
-  label: string;
+  /** Whether the select shows the letters after the name, such as "P twins · პ ფ". */
+  showLetters: boolean;
   /** The preset's letter IDs in alphabetical order. Empty for `custom`. */
   letterIds: readonly string[];
 };

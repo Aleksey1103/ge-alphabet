@@ -36,6 +36,9 @@ window.matchMedia = (query) => ({
 });
 
 // Vitest globals are off, so React Testing Library can't register its own cleanup.
+// The saved interface language and the page's lang would otherwise leak into the next test.
 afterEach(() => {
   cleanup();
+  localStorage.clear();
+  document.documentElement.removeAttribute('lang');
 });

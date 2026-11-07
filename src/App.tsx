@@ -1,6 +1,8 @@
 import {useMemo, useState} from 'react';
 import {GEORGIAN_ALPHABET} from './data/georgianAlphabet.ts';
+import {useLanguagePreference} from './hooks/useLanguagePreference.ts';
 import {useTrainingSession} from './hooks/useTrainingSession.ts';
+import {LanguageContext} from './i18n/LanguageContext.ts';
 import HomeScreen from './screens/HomeScreen/index.ts';
 import LearningScreen from './screens/LearningScreen/index.ts';
 import ResultsScreen from './screens/ResultsScreen/index.ts';
@@ -30,6 +32,7 @@ const HOME: IdleView = {screen: 'home'};
 function App() {
   const session = useTrainingSession();
   const {state} = session;
+  const language = useLanguagePreference();
   const [idleView, setIdleView] = useState<IdleView>(HOME);
   /** The letters of the last session started, for Restart and New Session. */
   const [sessionLetterIds, setSessionLetterIds] =
@@ -121,7 +124,7 @@ function App() {
         pl-[calc(env(safe-area-inset-left)+1rem)]`,
       )}
     >
-      {screen}
+      <LanguageContext value={language}>{screen}</LanguageContext>
     </div>
   );
 }

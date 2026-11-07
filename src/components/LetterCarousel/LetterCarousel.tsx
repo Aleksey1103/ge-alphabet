@@ -2,6 +2,8 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from 'embla-carousel-react';
 import {useEffect, useEffectEvent, useState, type KeyboardEvent} from 'react';
+import {useMessages} from '../../hooks/useMessages.ts';
+import type {Messages} from '../../i18n/messages.ts';
 import type {GeorgianLetter} from '../../types/alphabet.ts';
 import type {LetterStatus} from '../../types/training.ts';
 import {cx} from '../../utils/classNames.ts';
@@ -53,12 +55,21 @@ const STATUS_CLASSES: Record<LetterStatus, string> = {
   incorrect: 'cursor-not-allowed border-error bg-error-soft',
 };
 
-const BADGES: Partial<
-  Record<LetterStatus, {icon: string; text: string; className: string}>
-> = {
-  correct: {icon: '✓', text: 'correct answer', className: 'text-success'},
-  incorrect: {icon: '✕', text: 'wrong answer', className: 'text-error'},
-};
+/** The mark on a resolved letter, and its text for screen readers. */
+function badgeOf(
+  status: LetterStatus,
+  t: Messages,
+): {icon: string; text: string; className: string} | null {
+  if (status === 'correct')
+    return {
+      icon: '✓',
+      text: t.training.correctBadge,
+      className: 'text-success',
+    };
+  if (status === 'incorrect')
+    return {icon: '✕', text: t.training.wrongBadge, className: 'text-error'};
+  return null;
+}
 
 /**
  * An iOS-style picker wheel that loops through the letters. The letter it stops
@@ -75,6 +86,7 @@ export default function LetterCarousel({
   onSelect,
   onDeselect,
 }: LetterCarouselProps) {
+  const t = useMessages();
   const canSpin = letters.some((letter) => isSelectable(letter.id));
   const [emblaRef, emblaApi] = useEmblaCarousel({
     ...EMBLA_OPTIONS,
@@ -332,14 +344,14 @@ export default function LetterCarousel({
           <div
             className="size-full transform-3d"
             role="listbox"
-            aria-label="Georgian letters"
+            aria-label={t.training.letters}
             aria-orientation="vertical"
             aria-disabled={!canSpin}
             onKeyDown={handleKeyDown}
           >
             {slides.map((letter, index) => {
               const status = getStatus(letter.id);
-              const badge = BADGES[status];
+              const badge = badgeOf(status, t);
               const canSelect = isSelectable(letter.id);
               return (
                 <button

@@ -1,4 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
+import {useMessages} from '../../hooks/useMessages.ts';
+import type {Messages} from '../../i18n/messages.ts';
 import {cx} from '../../utils/classNames.ts';
 import PrimaryButton from '../PrimaryButton/index.ts';
 import SpeakerIcon from '../SpeakerIcon/index.ts';
@@ -13,13 +15,16 @@ type PlaybackSpeed = 1 | 0.5;
 const NORMAL_SPEED: PlaybackSpeed = 1;
 const SLOW_SPEED: PlaybackSpeed = 0.5;
 
-const ERROR_MESSAGES: Partial<Record<PlayerState, string>> = {
-  'load-error':
-    "The sound couldn't be loaded. Check your connection and try again.",
-  blocked: 'Your browser blocked the sound. Tap “Try again” to play it.',
-};
-const MISSING_MESSAGE =
-  "The recording for this letter is missing, so this exercise can't be played.";
+function errorText(
+  state: PlayerState,
+  missing: boolean,
+  t: Messages,
+): string | null {
+  if (missing) return t.audio.missing;
+  if (state === 'load-error') return t.audio.loadError;
+  if (state === 'blocked') return t.audio.blocked;
+  return null;
+}
 
 type Activity = 'playing' | 'loading';
 
@@ -42,16 +47,22 @@ function circleClasses(activity: Activity | null, sizeAndLook: string) {
 
 /**
  * The only visible text under a button, shown while its sound loads. When
- * hidden, it still keeps its space so the buttons don't shift.
+ * hidden, it still keeps its height so the buttons don't shift. It has no
+ * width of its own and spills evenly around the button's center, so a long
+ * translation (such as «Загрузка…») can't widen the slow button past its
+ * column.
  */
-function loadingLabel(activity: Activity | null) {
+function loadingLabel(activity: Activity | null, text: string) {
   const loading = activity === 'loading';
   return (
     <span
-      className={cx('font-semibold text-muted', !loading && 'invisible')}
+      className={cx(
+        'flex w-0 justify-center font-semibold whitespace-nowrap text-muted',
+        !loading && 'invisible',
+      )}
       aria-hidden={loading ? undefined : true}
     >
-      Loading…
+      {text}
     </span>
   );
 }
@@ -69,6 +80,7 @@ type AudioPlayerProps = {
 export default function AudioPlayer({src}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [state, setState] = useState<PlayerState>('ready');
+  const t = useMessages();
   /**
    * The speed of the current (or last requested) playback, which Try again
    * reuses.
@@ -118,7 +130,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
     );
 
   const missing = src === null;
-  const errorMessage = missing ? MISSING_MESSAGE : ERROR_MESSAGES[state];
+  const errorMessage = errorText(state, missing, t);
 
   // Each button shows progress only for the speed it plays.
   const activityOf = (target: PlaybackSpeed) =>
@@ -168,8 +180,10 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
           >
             <SpeakerIcon size={36} />
           </span>
-          <span className="sr-only">{missing ? 'No sound' : 'Play sound'}</span>{' '}
-          {loadingLabel(normalActivity)}
+          <span className="sr-only">
+            {missing ? t.audio.noSound : t.audio.play}
+          </span>{' '}
+          {loadingLabel(normalActivity, t.audio.loading)}
         </button>
         <button
           type="button"
@@ -188,8 +202,8 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
           >
             {SLOW_SPEED}×
           </span>
-          <span className="sr-only">Slow (half speed)</span>{' '}
-          {loadingLabel(slowActivity)}
+          <span className="sr-only">{t.audio.slow}</span>{' '}
+          {loadingLabel(slowActivity, t.audio.loading)}
         </button>
       </div>
       {errorMessage && (
@@ -205,7 +219,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
               compact
               onClick={() => void play(speed)}
             >
-              Try again
+              {t.audio.tryAgain}
             </PrimaryButton>
           )}
         </div>

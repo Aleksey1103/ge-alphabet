@@ -99,6 +99,42 @@ describe('App', () => {
     expect(screen.getByRole('button', {name: 'Get Started'})).toBeTruthy();
   });
 
+  it('switches the interface to Russian everywhere and remembers it', () => {
+    const {unmount} = render(<App />);
+    const english = screen.getByRole('button', {name: 'English'});
+    expect(english.getAttribute('aria-pressed')).toBe('true');
+    expect(document.documentElement.lang).toBe('en');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Русский'}));
+    expect(screen.getByRole('heading', {name: 'Учим грузинский'})).toBeTruthy();
+    expect(
+      screen
+        .getByRole('button', {name: 'Русский'})
+        .getAttribute('aria-pressed'),
+    ).toBe('true');
+    expect(document.documentElement.lang).toBe('ru');
+    expect(document.title).toBe('Учим грузинский');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Начать'}));
+    expect(screen.getByRole('heading', {name: 'Выберите буквы'})).toBeTruthy();
+    const select = screen.getByRole<HTMLSelectElement>('combobox', {
+      name: 'Набор букв',
+    });
+    expect(select.selectedOptions[0]?.textContent).toBe('Все буквы');
+    expect(screen.getByRole('status').textContent).toBe('Выбрано: 33 буквы');
+
+    fireEvent.click(screen.getByRole('button', {name: 'Начать тренировку'}));
+    expect(screen.getByRole('heading', {name: 'Вопрос 1 из 33'})).toBeTruthy();
+    expect(
+      screen.getByRole('button', {name: 'Подтвердить ответ'}),
+    ).toBeTruthy();
+
+    // The choice is saved, so the next visit opens in Russian.
+    unmount();
+    render(<App />);
+    expect(screen.getByRole('heading', {name: 'Учим грузинский'})).toBeTruthy();
+  });
+
   it('opens the settings screen with all letters, and goes back home', () => {
     render(<App />);
     openSettings();

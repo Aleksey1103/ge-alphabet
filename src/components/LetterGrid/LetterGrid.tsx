@@ -1,3 +1,4 @@
+import {useMessages} from '../../hooks/useMessages.ts';
 import type {GeorgianLetter} from '../../types/alphabet.ts';
 import {cx} from '../../utils/classNames.ts';
 
@@ -20,13 +21,14 @@ export default function LetterGrid({
   onClear,
 }: LetterGridProps) {
   const hasChecked = checkedIds.length > 0;
+  const t = useMessages();
 
   return (
     <ul
       className="grid
         grid-cols-[repeat(auto-fill,minmax(var(--spacing-touch),1fr))]
         gap-tight"
-      aria-label="Letters"
+      aria-label={t.settings.letters}
     >
       {letters.map((letter) => {
         const checked = checkedIds.includes(letter.id);
@@ -73,7 +75,7 @@ export default function LetterGrid({
             if (hasChecked) onClear();
           }}
         >
-          Clear
+          {t.settings.clear}
         </button>
       </li>
     </ul>

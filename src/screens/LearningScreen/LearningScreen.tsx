@@ -4,6 +4,7 @@ import LetterSoundButton from '../../components/LetterSoundButton/index.ts';
 import PrimaryButton from '../../components/PrimaryButton/index.ts';
 import Screen from '../../components/Screen/index.ts';
 import ScreenHeading from '../../components/ScreenHeading/index.ts';
+import {useMessages} from '../../hooks/useMessages.ts';
 import {
   initialLetterPlayback,
   letterPlaybackReducer,
@@ -33,6 +34,7 @@ export default function LearningScreen({
   onClose,
   onStart,
 }: LearningScreenProps) {
+  const t = useMessages();
   const [playback, dispatch] = useReducer(
     letterPlaybackReducer,
     initialLetterPlayback,
@@ -49,11 +51,15 @@ export default function LearningScreen({
           grid-cols-[var(--spacing-touch)_1fr_var(--spacing-touch)] items-center
           gap-gutter"
       >
-        <IconButton icon="back" label="Back to settings" onClick={onBack} />
+        <IconButton icon="back" label={t.learning.back} onClick={onBack} />
         <ScreenHeading className="text-center text-2xl">
-          Learn Letters
+          {t.learning.title}
         </ScreenHeading>
-        <IconButton icon="close" label="Exit to home" onClick={onClose} />
+        <IconButton
+          icon="close"
+          label={t.common.exitToHome}
+          onClick={onClose}
+        />
       </header>
 
       {/* On a short screen the table shrinks and scrolls by itself, so the header and button stay. */}
@@ -62,14 +68,14 @@ export default function LearningScreen({
           bg-surface"
       >
         <table className="w-full border-collapse">
-          <caption className="sr-only">Letters and their sounds</caption>
+          <caption className="sr-only">{t.learning.caption}</caption>
           <thead>
             <tr>
               <th scope="col" className={cx(HEADER_CELL_CLASSES, 'text-left')}>
-                Letter
+                {t.learning.letterColumn}
               </th>
               <th scope="col" className={cx(HEADER_CELL_CLASSES, 'text-right')}>
-                Sound
+                {t.learning.soundColumn}
               </th>
             </tr>
           </thead>
@@ -105,13 +111,16 @@ export default function LearningScreen({
             text-[0.9375rem]"
           role="alert"
         >
-          The sound for <span lang="ka">{failedLetter.character}</span> couldn't
-          be played. Tap it to try again.
+          {t.learning.soundFailed.before}
+          <span lang="ka">{failedLetter.character}</span>
+          {t.learning.soundFailed.after}
         </p>
       )}
 
       <div className="mt-auto flex flex-col gap-tight">
-        <PrimaryButton onClick={onStart}>Start Training</PrimaryButton>
+        <PrimaryButton onClick={onStart}>
+          {t.common.startTraining}
+        </PrimaryButton>
       </div>
     </Screen>
   );

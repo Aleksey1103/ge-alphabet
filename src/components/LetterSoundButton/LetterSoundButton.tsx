@@ -1,4 +1,5 @@
 import {useEffect, useRef} from 'react';
+import {useMessages} from '../../hooks/useMessages.ts';
 import type {
   LetterPlaybackEventType,
   LetterSoundStatus,
@@ -49,6 +50,7 @@ export default function LetterSoundButton({
   onPlaybackEvent,
 }: LetterSoundButtonProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const t = useMessages();
 
   useEffect(() => {
     if (status === 'idle') audioRef.current?.pause();
@@ -69,13 +71,15 @@ export default function LetterSoundButton({
           text-muted"
       >
         <span className="text-sm" aria-hidden="true">
-          No sound
+          {t.learning.noSound}
         </span>
         <span className={cx(CIRCLE_CLASSES, 'bg-surface-2')}>
           <SpeakerIcon size={22} muted />
         </span>
         <span className="sr-only">
-          No sound for <span lang="ka">{letter.character}</span>
+          {t.learning.noSoundFor.before}
+          <span lang="ka">{letter.character}</span>
+          {t.learning.noSoundFor.after}
         </span>
       </button>
     );
@@ -119,7 +123,9 @@ export default function LetterSoundButton({
         <SpeakerIcon size={22} />
       </span>
       <span className="sr-only">
-        Play <span lang="ka">{letter.character}</span>
+        {t.learning.play.before}
+        <span lang="ka">{letter.character}</span>
+        {t.learning.play.after}
       </span>
     </button>
   );

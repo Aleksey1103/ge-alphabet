@@ -1,11 +1,9 @@
+import {useMessages} from '../../hooks/useMessages.ts';
+import type {Messages} from '../../i18n/messages.ts';
 import type {GeorgianLetter} from '../../types/alphabet.ts';
 import type {Feedback} from '../../types/training.ts';
 import {cx} from '../../utils/classNames.ts';
-import {
-  formatScore,
-  POINTS_FOR_CORRECT,
-  POINTS_FOR_INCORRECT,
-} from '../../utils/scoring.ts';
+import {POINTS_FOR_CORRECT, POINTS_FOR_INCORRECT} from '../../utils/scoring.ts';
 
 type FeedbackMessageProps = {
   feedback: Feedback | null;
@@ -28,6 +26,8 @@ export default function FeedbackMessage({
   correctLetter,
   prompt,
 }: FeedbackMessageProps) {
+  const t = useMessages();
+
   return (
     <div className="grid w-full place-items-center *:col-start-1 *:row-start-1">
       {ALL_FEEDBACK.map((reserved, index) => (
@@ -36,7 +36,7 @@ export default function FeedbackMessage({
           className={cx(MESSAGE_CLASSES, toneOf(reserved).message, 'invisible')}
           aria-hidden="true"
         >
-          {messageContent(reserved, correctLetter)}
+          {messageContent(reserved, correctLetter, t)}
         </p>
       ))}
       {!feedback && (
@@ -52,7 +52,7 @@ export default function FeedbackMessage({
               'animate-appear',
             )}
           >
-            {messageContent(feedback, correctLetter)}
+            {messageContent(feedback, correctLetter, t)}
           </p>
         )}
       </div>
@@ -86,6 +86,7 @@ function toneOf(feedback: Feedback) {
 function messageContent(
   feedback: Feedback,
   correctLetter: GeorgianLetter | null,
+  t: Messages,
 ) {
   return (
     <>
@@ -99,33 +100,37 @@ function messageContent(
       >
         {feedback.kind === 'correct' ? '✓' : '✕'}
       </span>
-      <span>{messageText(feedback, correctLetter)}</span>
+      <span>{messageText(feedback, correctLetter, t)}</span>
     </>
   );
 }
 
-const GAINED = `${formatScore(POINTS_FOR_CORRECT)} point`;
-const LOST = `${formatScore(POINTS_FOR_INCORRECT)} point`;
-
-function messageText(feedback: Feedback, correctLetter: GeorgianLetter | null) {
+function messageText(
+  feedback: Feedback,
+  correctLetter: GeorgianLetter | null,
+  t: Messages,
+) {
   switch (feedback.kind) {
     case 'correct':
       return feedback.attempt === 1
-        ? `Correct! ${GAINED}`
-        : `Correct on the second try! ${GAINED}`;
+        ? t.feedback.correctFirst(POINTS_FOR_CORRECT)
+        : t.feedback.correctSecond(POINTS_FOR_CORRECT);
     case 'retry':
-      return `Not quite! ${LOST}. Try once more.`;
-    case 'failed':
+      return t.feedback.retry(POINTS_FOR_INCORRECT);
+    case 'failed': {
+      const {before, after} = t.feedback.failed(POINTS_FOR_INCORRECT);
       return (
         <>
-          Incorrect, {LOST}. The correct letter was{' '}
+          {before}
           <span
             lang="ka"
             className="align-[-0.1em] text-[1.375em] leading-none"
           >
             {correctLetter?.character}
           </span>
+          {after}
         </>
       );
+    }
   }
 }

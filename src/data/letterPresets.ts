@@ -1,5 +1,5 @@
 import type {LetterPreset, LetterPresetId} from '../types/alphabet.ts';
-import {GEORGIAN_ALPHABET, getLetterById} from './georgianAlphabet.ts';
+import {GEORGIAN_ALPHABET} from './georgianAlphabet.ts';
 
 // The letter sets from SPEC 5.2, by letter ID, each in alphabetical order.
 
@@ -9,28 +9,14 @@ import {GEORGIAN_ALPHABET, getLetterById} from './georgianAlphabet.ts';
  */
 const TWINS: readonly LetterPreset[] = (
   [
-    {id: 'twins-p', name: 'P twins', letterIds: ["p'ari", 'pari']},
-    {id: 'twins-t', name: 'T twins', letterIds: ['tani', "t'ari"]},
-    {id: 'twins-ch', name: 'Ch twins', letterIds: ['chini', "ch'ari"]},
-    {id: 'twins-ts', name: 'Ts twins', letterIds: ['tsani', "ts'ili"]},
-    {id: 'twins-h', name: 'H twins', letterIds: ['khani', 'hae']},
-    {
-      id: 'triplets-k',
-      name: 'K triplets',
-      letterIds: ["k'ani", 'kani', "q'ari"],
-    },
-  ] satisfies Array<{
-    id: LetterPresetId;
-    name: string;
-    letterIds: readonly string[];
-  }>
-).map(({id, name, letterIds}) => ({
-  id,
-  label: `${name} · ${letterIds
-    .map((letterId) => getLetterById(letterId)?.character)
-    .join(' ')}`,
-  letterIds,
-}));
+    {id: 'twins-p', letterIds: ["p'ari", 'pari']},
+    {id: 'twins-t', letterIds: ['tani', "t'ari"]},
+    {id: 'twins-ch', letterIds: ['chini', "ch'ari"]},
+    {id: 'twins-ts', letterIds: ['tsani', "ts'ili"]},
+    {id: 'twins-h', letterIds: ['khani', 'hae']},
+    {id: 'triplets-k', letterIds: ["k'ani", 'kani', "q'ari"]},
+  ] satisfies Array<{id: LetterPresetId; letterIds: readonly string[]}>
+).map((preset) => ({...preset, showLetters: true}));
 
 const twinIds = new Set(TWINS.flatMap((preset) => preset.letterIds));
 
@@ -38,17 +24,17 @@ const twinIds = new Set(TWINS.flatMap((preset) => preset.letterIds));
 export const LETTER_PRESETS: readonly LetterPreset[] = [
   {
     id: 'all',
-    label: 'All letters',
+    showLetters: false,
     letterIds: GEORGIAN_ALPHABET.map((letter) => letter.id),
   },
   {
     id: 'vowels',
-    label: 'Vowels',
+    showLetters: false,
     letterIds: ['ani', 'eni', 'ini', 'oni', 'uni'],
   },
   {
     id: 'distinct-sounds',
-    label: 'Distinct sounds',
+    showLetters: false,
     letterIds: [
       'ani',
       'bani',
@@ -75,10 +61,10 @@ export const LETTER_PRESETS: readonly LetterPreset[] = [
   ...TWINS,
   {
     id: 'all-twins',
-    label: 'All twins',
+    showLetters: false,
     letterIds: GEORGIAN_ALPHABET.filter((letter) => twinIds.has(letter.id)).map(
       (letter) => letter.id,
     ),
   },
-  {id: 'custom', label: 'Custom', letterIds: []},
+  {id: 'custom', showLetters: false, letterIds: []},
 ];

@@ -5,12 +5,15 @@ import PrimaryButton from '../../components/PrimaryButton/index.ts';
 import Screen from '../../components/Screen/index.ts';
 import ScreenHeading from '../../components/ScreenHeading/index.ts';
 import {LETTER_PRESETS} from '../../data/letterPresets.ts';
+import {useMessages} from '../../hooks/useMessages.ts';
+import {presetLabel} from '../../i18n/presetLabel.ts';
 import {
   canStartSession,
   matchingPresetId,
   toggleLetter,
   type LetterSelection,
 } from '../../state/letterSelection.ts';
+import {MIN_SESSION_LETTERS} from '../../state/trainingSession.ts';
 import type {GeorgianLetter} from '../../types/alphabet.ts';
 
 type SettingsScreenProps = {
@@ -38,6 +41,7 @@ export default function SettingsScreen({
   const canStart = canStartSession(letterIds);
   const selectId = useId();
   const hintId = useId();
+  const t = useMessages();
 
   return (
     <Screen className="gap-gutter">
@@ -46,15 +50,15 @@ export default function SettingsScreen({
           grid-cols-[var(--spacing-touch)_1fr_var(--spacing-touch)] items-center
           gap-gutter"
       >
-        <IconButton icon="back" label="Back to home" onClick={onBack} />
+        <IconButton icon="back" label={t.settings.back} onClick={onBack} />
         <ScreenHeading className="text-center text-2xl">
-          Choose Letters
+          {t.settings.title}
         </ScreenHeading>
       </header>
 
       <div className="flex flex-col gap-tight">
         <label htmlFor={selectId} className="text-sm text-muted">
-          Letter set
+          {t.settings.letterSet}
         </label>
         <div className="relative">
           <select
@@ -71,7 +75,7 @@ export default function SettingsScreen({
           >
             {LETTER_PRESETS.map((preset) => (
               <option key={preset.id} value={preset.id}>
-                {preset.label}
+                {presetLabel(preset, t)}
               </option>
             ))}
           </select>
@@ -106,12 +110,11 @@ export default function SettingsScreen({
 
       <div className="mt-auto flex flex-col gap-tight">
         <p className="text-center text-sm text-muted" role="status">
-          {letterIds.length} {letterIds.length === 1 ? 'letter' : 'letters'}{' '}
-          selected
+          {t.settings.lettersSelected(letterIds.length)}
         </p>
         {!canStart && (
           <p id={hintId} className="text-center text-sm text-muted">
-            Choose at least 2 letters
+            {t.settings.minLetters(MIN_SESSION_LETTERS)}
           </p>
         )}
         <PrimaryButton
@@ -120,14 +123,14 @@ export default function SettingsScreen({
           aria-describedby={canStart ? undefined : hintId}
           onClick={() => onLearn(letterIds)}
         >
-          Learn Letters
+          {t.common.learnLetters}
         </PrimaryButton>
         <PrimaryButton
           disabled={!canStart}
           aria-describedby={canStart ? undefined : hintId}
           onClick={() => onStart(letterIds)}
         >
-          Start Training
+          {t.common.startTraining}
         </PrimaryButton>
       </div>
     </Screen>

@@ -12,18 +12,18 @@ function characters(presetId: string): string {
 
 describe('LETTER_PRESETS', () => {
   it('lists the presets from the spec, in order', () => {
-    expect(LETTER_PRESETS.map((preset) => preset.label)).toEqual([
-      'All letters',
-      'Vowels',
-      'Distinct sounds',
-      'P twins · პ ფ',
-      'T twins · თ ტ',
-      'Ch twins · ჩ ჭ',
-      'Ts twins · ც წ',
-      'H twins · ხ ჰ',
-      'K triplets · კ ქ ყ',
-      'All twins',
-      'Custom',
+    expect(LETTER_PRESETS.map((preset) => preset.id)).toEqual([
+      'all',
+      'vowels',
+      'distinct-sounds',
+      'twins-p',
+      'twins-t',
+      'twins-ch',
+      'twins-ts',
+      'twins-h',
+      'triplets-k',
+      'all-twins',
+      'custom',
     ]);
   });
 
