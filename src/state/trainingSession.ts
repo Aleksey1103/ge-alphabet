@@ -74,6 +74,14 @@ export function canSelectLetter(
   return state.phase === 'answering' && letterId !== state.rejectedLetterId;
 }
 
+/**
+ * Whether the current sound can be played. Not while a resolved exercise's
+ * feedback shows; a wrong first answer leaves it playable for the second try.
+ */
+export function canPlaySound(state: TrainingState): boolean {
+  return state.phase === 'answering';
+}
+
 /** Whether Confirm would submit an answer now. */
 export function canSubmit(state: TrainingState): boolean {
   return state.phase === 'answering' && state.selectedLetterId !== null;

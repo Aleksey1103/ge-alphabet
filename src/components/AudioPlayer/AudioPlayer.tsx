@@ -70,6 +70,8 @@ function loadingLabel(activity: Activity | null, text: string) {
 type AudioPlayerProps = {
   /** URL of the recording, or `null` if it's missing. */
   src: string | null;
+  /** Turns off every button that plays the sound, such as while feedback shows. */
+  disabled?: boolean;
 };
 
 /**
@@ -77,7 +79,7 @@ type AudioPlayerProps = {
  * the old `<audio>` element, so a late event from the previous sound can't
  * affect the new exercise.
  */
-export default function AudioPlayer({src}: AudioPlayerProps) {
+export default function AudioPlayer({src, disabled = false}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [state, setState] = useState<PlayerState>('ready');
   const t = useMessages();
@@ -168,7 +170,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
         <button
           type="button"
           className={cx(BUTTON_CLASSES, 'col-start-2')}
-          disabled={missing}
+          disabled={missing || disabled}
           onClick={() => void play(NORMAL_SPEED)}
         >
           <span
@@ -188,7 +190,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
         <button
           type="button"
           className={cx(BUTTON_CLASSES, 'justify-self-start')}
-          disabled={missing}
+          disabled={missing || disabled}
           onClick={() => void play(SLOW_SPEED)}
         >
           <span
@@ -217,6 +219,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
             <PrimaryButton
               variant="error"
               compact
+              disabled={disabled}
               onClick={() => void play(speed)}
             >
               {t.audio.tryAgain}

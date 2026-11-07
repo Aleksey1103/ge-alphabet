@@ -5,6 +5,7 @@ import {seededRandom} from '../test/seededRandom.ts';
 import type {Exercise, TrainingState} from '../types/training.ts';
 import {EMPTY_STATS} from '../utils/scoring.ts';
 import {
+  canPlaySound,
   canSelectLetter,
   canSubmit,
   createExercises,
@@ -374,6 +375,36 @@ describe('canSelectLetter and canSubmit', () => {
     expect(canSelectLetter(answered, 'ani')).toBe(false);
     expect(canSubmit(answered)).toBe(false);
     expect(canSelectLetter(initialTrainingState, 'ani')).toBe(false);
+  });
+});
+
+describe('canPlaySound', () => {
+  it('allows playing during both attempts', () => {
+    const state = start();
+    expect(canPlaySound(state)).toBe(true);
+    expect(canPlaySound(answer(state, wrongAnswer(state)))).toBe(true);
+  });
+
+  it('blocks playing while a resolved exercise shows its feedback', () => {
+    const state = start();
+    expect(canPlaySound(answer(state, target(state)))).toBe(false);
+
+    const afterFirst = answer(state, wrongAnswer(state));
+    const failed = answer(
+      afterFirst,
+      wrongLetterId(target(state), afterFirst.rejectedLetterId),
+    );
+    expect(failed.feedback?.kind).toBe('failed');
+    expect(canPlaySound(failed)).toBe(false);
+  });
+
+  it('allows playing again once the next exercise starts', () => {
+    const state = start();
+    expect(canPlaySound(advance(answer(state, target(state))))).toBe(true);
+  });
+
+  it('blocks playing outside a session', () => {
+    expect(canPlaySound(initialTrainingState)).toBe(false);
   });
 });
 

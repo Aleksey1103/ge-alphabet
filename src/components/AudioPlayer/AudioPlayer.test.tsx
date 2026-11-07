@@ -166,6 +166,33 @@ describe('AudioPlayer', () => {
     );
   });
 
+  it('disables both play buttons while disabled', () => {
+    const play = vi.spyOn(HTMLMediaElement.prototype, 'play');
+    render(<AudioPlayer src="/audio/ა.mp3" disabled />);
+    const normal = screen.getByRole('button', {name: 'Play sound'});
+    const slow = screen.getByRole('button', {name: 'Slow (half speed)'});
+    expect(normal).toHaveProperty('disabled', true);
+    expect(slow).toHaveProperty('disabled', true);
+
+    fireEvent.click(normal);
+    fireEvent.click(slow);
+    expect(play).not.toHaveBeenCalled();
+  });
+
+  it('disables Try again while disabled', () => {
+    const play = vi.spyOn(HTMLMediaElement.prototype, 'play');
+    const {container, rerender} = render(<AudioPlayer src="/audio/ა.mp3" />);
+    const audio = container.querySelector('audio');
+    if (!audio) throw new Error('no <audio> element');
+    fireEvent.error(audio);
+
+    rerender(<AudioPlayer src="/audio/ა.mp3" disabled />);
+    const retry = screen.getByRole('button', {name: 'Try again'});
+    expect(retry.getAttribute('aria-disabled')).toBe('true');
+    fireEvent.click(retry);
+    expect(play).not.toHaveBeenCalled();
+  });
+
   it('stops the sound when it unmounts', () => {
     const pause = vi.spyOn(HTMLMediaElement.prototype, 'pause');
     const {unmount} = render(<AudioPlayer src="/audio/ა.mp3" />);

@@ -296,6 +296,32 @@ describe('App', () => {
     ).toBeTruthy();
   });
 
+  it('disables the sound buttons only while a resolved answer shows its feedback', () => {
+    const soundButtonsDisabled = () =>
+      ['Play sound', 'Slow (half speed)'].map(
+        (name) =>
+          screen.getByRole<HTMLButtonElement>('button', {name}).disabled,
+      );
+
+    startTraining();
+    expect(soundButtonsDisabled()).toEqual([false, false]);
+
+    // A wrong first answer leaves the sound playable for the second try.
+    fireEvent.click(wrongOption());
+    fireEvent.click(confirmButton());
+    expect(soundButtonsDisabled()).toEqual([false, false]);
+
+    fireEvent.click(option(targetCharacter()));
+    fireEvent.click(confirmButton());
+    expect(soundButtonsDisabled()).toEqual([true, true]);
+
+    wait(FEEDBACK_DELAY_MS);
+    expect(
+      screen.getByRole('heading', {name: 'Question 2 of 33'}),
+    ).toBeTruthy();
+    expect(soundButtonsDisabled()).toEqual([false, false]);
+  });
+
   it('reveals the correct letter after two wrong answers', () => {
     startTraining();
     const target = targetCharacter();

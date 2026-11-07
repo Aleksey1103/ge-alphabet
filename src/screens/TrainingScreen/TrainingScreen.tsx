@@ -9,6 +9,7 @@ import ScreenHeading from '../../components/ScreenHeading/index.ts';
 import {useMessages} from '../../hooks/useMessages.ts';
 import type {TrainingSession} from '../../hooks/useTrainingSession.ts';
 import {
+  canPlaySound,
   canSelectLetter,
   canSubmit,
   getLetterStatus,
@@ -83,7 +84,11 @@ export default function TrainingScreen({
           correctLetter={currentLetter}
           prompt={t.training.prompt}
         />
-        <AudioPlayer key={exerciseKey} src={currentLetter?.audioSrc ?? null} />
+        <AudioPlayer
+          key={exerciseKey}
+          src={currentLetter?.audioSrc ?? null}
+          disabled={!canPlaySound(state)}
+        />
       </section>
 
       {/* Takes the remaining height, but never less than the carousel's minimum plus the button. */}
