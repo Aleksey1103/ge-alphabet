@@ -17,7 +17,8 @@ const ALL_LETTER_IDS = presetLetterIds('all');
 
 /**
  * The screen shown while no session is running. Settings and learning carry
- * the letters checked but not started yet, which only a started session keeps.
+ * the checked letters between them. Going home drops them, so settings opened
+ * from home starts again with all letters.
  */
 type IdleView =
   | {screen: 'home'}
@@ -30,7 +31,7 @@ function App() {
   const session = useTrainingSession();
   const {state} = session;
   const [idleView, setIdleView] = useState<IdleView>(HOME);
-  /** The letters of the last session started. The settings screen opens with them. */
+  /** The letters of the last session started, for Restart and New Session. */
   const [sessionLetterIds, setSessionLetterIds] =
     useState<LetterSelection>(ALL_LETTER_IDS);
   const sessionLetters = useMemo(
@@ -45,15 +46,18 @@ function App() {
     session.start(lettersFromIds(letterIds));
   }
 
-  function openSettings() {
-    setIdleView({screen: 'settings', letterIds: sessionLetterIds});
+  function openSettings(letterIds: LetterSelection) {
+    setIdleView({screen: 'settings', letterIds});
   }
 
   function idleScreen(view: IdleView) {
     switch (view.screen) {
       case 'home':
         return (
-          <HomeScreen letters={GEORGIAN_ALPHABET} onGetStarted={openSettings} />
+          <HomeScreen
+            letters={GEORGIAN_ALPHABET}
+            onGetStarted={() => openSettings(ALL_LETTER_IDS)}
+          />
         );
       case 'settings':
         return (
@@ -97,7 +101,7 @@ function App() {
           totalExercises={state.exercises.length}
           onRestart={() => session.start(sessionLetters)}
           onNewSession={() => {
-            openSettings();
+            openSettings(sessionLetterIds);
             session.exit();
           }}
           onExit={session.exit}

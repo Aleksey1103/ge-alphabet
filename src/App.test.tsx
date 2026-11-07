@@ -176,7 +176,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', {name: 'Learn Letters'})).toBeTruthy();
     expect(rowLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
 
-    // Back keeps the letters checked; Close drops them, as nothing was started.
+    // Back keeps the letters checked; going home drops them.
     fireEvent.click(screen.getByRole('button', {name: 'Back to settings'}));
     expect(letterSet()).toBe('Vowels');
     learnLetters();
@@ -192,11 +192,30 @@ describe('App', () => {
     expect(wheelLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
   });
 
-  it('reopens the settings with the letters of the last session', () => {
+  it('reopens the settings with all letters after going home from any screen', () => {
+    const goHomeAndReopen = (exitButton: string) => {
+      fireEvent.click(screen.getByRole('button', {name: exitButton}));
+      expect(
+        screen.getByRole('heading', {name: 'Learn Georgian'}),
+      ).toBeTruthy();
+      openSettings();
+      expect(letterSet()).toBe('All letters');
+    };
+
     startTraining('Vowels');
-    fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));
-    openSettings();
-    expect(letterSet()).toBe('Vowels');
+    goHomeAndReopen('Exit training');
+
+    chooseLetterSet('Vowels');
+    goHomeAndReopen('Back to home');
+
+    chooseLetterSet('P twins · პ ფ');
+    fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
+    for (let i = 0; i < 2; i++) {
+      fireEvent.click(option(targetCharacter()));
+      fireEvent.click(confirmButton());
+      wait(FEEDBACK_DELAY_MS);
+    }
+    goHomeAndReopen('Exit to home');
   });
 
   it('starts a 33-question session with all letters in the carousel', () => {
