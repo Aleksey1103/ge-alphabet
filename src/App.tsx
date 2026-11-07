@@ -2,6 +2,7 @@ import {useMemo, useState} from 'react';
 import {GEORGIAN_ALPHABET} from './data/georgianAlphabet.ts';
 import {useTrainingSession} from './hooks/useTrainingSession.ts';
 import HomeScreen from './screens/HomeScreen/index.ts';
+import LearningScreen from './screens/LearningScreen/index.ts';
 import ResultsScreen from './screens/ResultsScreen/index.ts';
 import SettingsScreen from './screens/SettingsScreen/index.ts';
 import TrainingScreen from './screens/TrainingScreen/index.ts';
@@ -14,11 +15,21 @@ import {cx} from './utils/classNames.ts';
 
 const ALL_LETTER_IDS = presetLetterIds('all');
 
+/**
+ * The screen shown while no session is running. Settings and learning carry
+ * the letters checked but not started yet, which only a started session keeps.
+ */
+type IdleView =
+  | {screen: 'home'}
+  | {screen: 'settings'; letterIds: LetterSelection}
+  | {screen: 'learning'; letterIds: LetterSelection};
+
+const HOME: IdleView = {screen: 'home'};
+
 function App() {
   const session = useTrainingSession();
   const {state} = session;
-  /** The screen shown while no session is running. */
-  const [idleView, setIdleView] = useState<'home' | 'settings'>('home');
+  const [idleView, setIdleView] = useState<IdleView>(HOME);
   /** The letters of the last session started. The settings screen opens with them. */
   const [sessionLetterIds, setSessionLetterIds] =
     useState<LetterSelection>(ALL_LETTER_IDS);
@@ -30,27 +41,50 @@ function App() {
   // Once the session is over (exit from training or from the results), Home shows again.
   function startSession(letterIds: LetterSelection) {
     setSessionLetterIds(letterIds);
-    setIdleView('home');
+    setIdleView(HOME);
     session.start(lettersFromIds(letterIds));
+  }
+
+  function openSettings() {
+    setIdleView({screen: 'settings', letterIds: sessionLetterIds});
+  }
+
+  function idleScreen(view: IdleView) {
+    switch (view.screen) {
+      case 'home':
+        return (
+          <HomeScreen letters={GEORGIAN_ALPHABET} onGetStarted={openSettings} />
+        );
+      case 'settings':
+        return (
+          <SettingsScreen
+            letters={GEORGIAN_ALPHABET}
+            initialLetterIds={view.letterIds}
+            onStart={startSession}
+            onLearn={(letterIds) =>
+              setIdleView({screen: 'learning', letterIds})
+            }
+            onBack={() => setIdleView(HOME)}
+          />
+        );
+      case 'learning':
+        return (
+          <LearningScreen
+            letters={lettersFromIds(view.letterIds)}
+            onBack={() =>
+              setIdleView({screen: 'settings', letterIds: view.letterIds})
+            }
+            onClose={() => setIdleView(HOME)}
+            onStart={() => startSession(view.letterIds)}
+          />
+        );
+    }
   }
 
   let screen;
   switch (state.phase) {
     case 'idle':
-      screen =
-        idleView === 'home' ? (
-          <HomeScreen
-            letters={GEORGIAN_ALPHABET}
-            onGetStarted={() => setIdleView('settings')}
-          />
-        ) : (
-          <SettingsScreen
-            letters={GEORGIAN_ALPHABET}
-            initialLetterIds={sessionLetterIds}
-            onStart={startSession}
-            onBack={() => setIdleView('home')}
-          />
-        );
+      screen = idleScreen(idleView);
       break;
     case 'answering':
     case 'feedback':
@@ -63,7 +97,7 @@ function App() {
           totalExercises={state.exercises.length}
           onRestart={() => session.start(sessionLetters)}
           onNewSession={() => {
-            setIdleView('settings');
+            openSettings();
             session.exit();
           }}
           onExit={session.exit}

@@ -6,16 +6,18 @@ import SettingsScreen from './SettingsScreen.tsx';
 
 function renderSettings(initialLetterIds = presetLetterIds('all')) {
   const onStart = vi.fn();
+  const onLearn = vi.fn();
   const onBack = vi.fn();
   render(
     <SettingsScreen
       letters={GEORGIAN_ALPHABET}
       initialLetterIds={initialLetterIds}
       onStart={onStart}
+      onLearn={onLearn}
       onBack={onBack}
     />,
   );
-  return {onStart, onBack};
+  return {onStart, onLearn, onBack};
 }
 
 function select(): HTMLSelectElement {
@@ -39,6 +41,10 @@ function checkedLetters(): string {
 
 function startButton(): HTMLElement {
   return screen.getByRole('button', {name: 'Start Training'});
+}
+
+function learnButton(): HTMLElement {
+  return screen.getByRole('button', {name: 'Learn Letters'});
 }
 
 describe('SettingsScreen', () => {
@@ -83,18 +89,23 @@ describe('SettingsScreen', () => {
     expect(select().value).toBe('twins-p');
   });
 
-  it('keeps Start disabled, with a hint, until 2 letters are checked', () => {
-    const {onStart} = renderSettings(presetLetterIds('custom'));
+  it('keeps Start and Learn disabled, with a hint, until 2 letters are checked', () => {
+    const {onStart, onLearn} = renderSettings(presetLetterIds('custom'));
     expect(startButton().getAttribute('aria-disabled')).toBe('true');
+    expect(learnButton().getAttribute('aria-disabled')).toBe('true');
     fireEvent.click(tile('ა'));
     expect(screen.getByRole('status').textContent).toBe('1 letter selected');
     expect(startButton().getAttribute('aria-disabled')).toBe('true');
+    expect(learnButton().getAttribute('aria-disabled')).toBe('true');
     expect(screen.getByText('Choose at least 2 letters')).toBeTruthy();
     fireEvent.click(startButton());
+    fireEvent.click(learnButton());
     expect(onStart).not.toHaveBeenCalled();
+    expect(onLearn).not.toHaveBeenCalled();
 
     fireEvent.click(tile('ბ'));
     expect(startButton().getAttribute('aria-disabled')).toBe('false');
+    expect(learnButton().getAttribute('aria-disabled')).toBe('false');
     expect(screen.queryByText('Choose at least 2 letters')).toBeNull();
   });
 
@@ -104,6 +115,20 @@ describe('SettingsScreen', () => {
     fireEvent.click(tile('ა'));
     fireEvent.click(startButton());
     expect(onStart).toHaveBeenCalledExactlyOnceWith(['ani', 'tani', "t'ari"]);
+  });
+
+  it('opens the learning screen with the checked letters, without starting', () => {
+    const {onStart, onLearn} = renderSettings();
+    choose('vowels');
+    fireEvent.click(tile('ა'));
+    fireEvent.click(learnButton());
+    expect(onLearn).toHaveBeenCalledExactlyOnceWith([
+      'eni',
+      'ini',
+      'oni',
+      'uni',
+    ]);
+    expect(onStart).not.toHaveBeenCalled();
   });
 
   it('goes back without starting', () => {

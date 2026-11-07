@@ -163,6 +163,35 @@ describe('App', () => {
     expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
   });
 
+  it('learns the chosen letters, then goes back, home, or into training', () => {
+    const learnLetters = () =>
+      fireEvent.click(screen.getByRole('button', {name: 'Learn Letters'}));
+    const rowLetters = () =>
+      screen.getAllByRole('rowheader').map((cell) => cell.textContent);
+
+    render(<App />);
+    openSettings();
+    chooseLetterSet('Vowels');
+    learnLetters();
+    expect(screen.getByRole('heading', {name: 'Learn Letters'})).toBeTruthy();
+    expect(rowLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
+
+    // Back keeps the letters checked; Close drops them, as nothing was started.
+    fireEvent.click(screen.getByRole('button', {name: 'Back to settings'}));
+    expect(letterSet()).toBe('Vowels');
+    learnLetters();
+    fireEvent.click(screen.getByRole('button', {name: 'Exit to home'}));
+    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    openSettings();
+    expect(letterSet()).toBe('All letters');
+
+    chooseLetterSet('Vowels');
+    learnLetters();
+    fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
+    expect(screen.getByRole('heading', {name: 'Question 1 of 5'})).toBeTruthy();
+    expect(wheelLetters()).toEqual(['ა', 'ე', 'ი', 'ო', 'უ']);
+  });
+
   it('reopens the settings with the letters of the last session', () => {
     startTraining('Vowels');
     fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));

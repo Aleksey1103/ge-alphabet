@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {cx} from '../../utils/classNames.ts';
 import PrimaryButton from '../PrimaryButton/index.ts';
+import SpeakerIcon from '../SpeakerIcon/index.ts';
 
 type PlayerState = 'ready' | 'loading' | 'playing' | 'load-error' | 'blocked';
 
@@ -165,7 +166,7 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
             )}
             aria-hidden="true"
           >
-            {playIcon}
+            <SpeakerIcon size={36} />
           </span>
           <span className="sr-only">{missing ? 'No sound' : 'Play sound'}</span>{' '}
           {loadingLabel(normalActivity)}
@@ -212,16 +213,3 @@ export default function AudioPlayer({src}: AudioPlayerProps) {
     </div>
   );
 }
-
-const playIcon = (
-  <svg viewBox="0 0 24 24" width="36" height="36" fill="currentColor">
-    <path d="M3 9.5v5a1 1 0 0 0 1 1h3l4.3 3.6a1 1 0 0 0 1.7-.8V5.7a1 1 0 0 0-1.7-.8L7 8.5H4a1 1 0 0 0-1 1Z" />
-    <path
-      d="M16 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-    />
-  </svg>
-);

@@ -18,6 +18,8 @@ type SettingsScreenProps = {
   /** The letters checked when the screen opens. */
   initialLetterIds: LetterSelection;
   onStart: (letterIds: LetterSelection) => void;
+  /** Opens the learning screen with the checked letters. */
+  onLearn: (letterIds: LetterSelection) => void;
   onBack: () => void;
 };
 
@@ -29,6 +31,7 @@ export default function SettingsScreen({
   letters,
   initialLetterIds,
   onStart,
+  onLearn,
   onBack,
 }: SettingsScreenProps) {
   const [letterIds, setLetterIds] = useState(initialLetterIds);
@@ -57,7 +60,7 @@ export default function SettingsScreen({
           <select
             id={selectId}
             className="min-h-touch w-full appearance-none rounded-2xl border-2
-              border-line bg-surface pr-12 pl-4 text-base"
+              border-line bg-surface pr-12 pl-4 text-base outline-none"
             value={matchingPresetId(letterIds)}
             onChange={(event) => {
               const preset = LETTER_PRESETS.find(
@@ -110,6 +113,14 @@ export default function SettingsScreen({
             Choose at least 2 letters
           </p>
         )}
+        <PrimaryButton
+          variant="secondary"
+          disabled={!canStart}
+          aria-describedby={canStart ? undefined : hintId}
+          onClick={() => onLearn(letterIds)}
+        >
+          Learn Letters
+        </PrimaryButton>
         <PrimaryButton
           disabled={!canStart}
           aria-describedby={canStart ? undefined : hintId}
