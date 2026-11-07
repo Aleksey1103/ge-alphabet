@@ -182,9 +182,7 @@ describe('App', () => {
         fireEvent.click(confirmButton());
         wait(FEEDBACK_DELAY_MS);
       }
-      expect(
-        screen.getByRole('heading', {name: 'Training complete'}),
-      ).toBeTruthy();
+      expect(screen.getByRole('heading', {name: 'Results'})).toBeTruthy();
     };
     startTraining('P twins · პ ფ');
     finishSession();
@@ -344,9 +342,7 @@ describe('App', () => {
     }
 
     expect(played.size).toBe(33);
-    expect(
-      screen.getByRole('heading', {name: 'Training complete'}),
-    ).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Results'})).toBeTruthy();
     expect(screen.getByText('+33')).toBeTruthy();
     expect(screen.getByText('100% accuracy')).toBeTruthy();
 

@@ -27,9 +27,7 @@ describe('ResultsScreen', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('heading', {name: 'Training complete'}),
-    ).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Results'})).toBeTruthy();
     expect(screen.getByText('+5')).toBeTruthy();
     expect(valueOf('Correct on first try')).toBe('20');
     expect(valueOf('Correct on second try')).toBe('6');
