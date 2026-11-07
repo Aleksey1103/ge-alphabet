@@ -95,7 +95,7 @@ function startTraining(letterSetLabel?: string) {
 describe('App', () => {
   it('starts on the home screen', () => {
     render(<App />);
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
     expect(screen.getByRole('button', {name: 'Get Started'})).toBeTruthy();
   });
 
@@ -106,14 +106,14 @@ describe('App', () => {
     expect(document.documentElement.lang).toBe('en');
 
     fireEvent.click(screen.getByRole('button', {name: 'Русский'}));
-    expect(screen.getByRole('heading', {name: 'Учим грузинский'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Учим алфавит'})).toBeTruthy();
     expect(
       screen
         .getByRole('button', {name: 'Русский'})
         .getAttribute('aria-pressed'),
     ).toBe('true');
     expect(document.documentElement.lang).toBe('ru');
-    expect(document.title).toBe('Учим грузинский');
+    expect(document.title).toBe('Учим алфавит');
 
     fireEvent.click(screen.getByRole('button', {name: 'Начать'}));
     expect(screen.getByRole('heading', {name: 'Выберите буквы'})).toBeTruthy();
@@ -132,7 +132,7 @@ describe('App', () => {
     // The choice is saved, so the next visit opens in Russian.
     unmount();
     render(<App />);
-    expect(screen.getByRole('heading', {name: 'Учим грузинский'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Учим алфавит'})).toBeTruthy();
   });
 
   it('opens the settings screen with all letters, and goes back home', () => {
@@ -142,7 +142,7 @@ describe('App', () => {
     expect(letterSet()).toBe('All letters');
 
     fireEvent.click(screen.getByRole('button', {name: 'Back to home'}));
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
   });
 
   it('trains only the chosen letters, and restarts with the same ones', () => {
@@ -194,7 +194,7 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', {name: 'Start Training'}));
     finishSession();
     fireEvent.click(screen.getByRole('button', {name: 'Exit to home'}));
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
   });
 
   it('learns the chosen letters, then goes back, home, or into training', () => {
@@ -215,7 +215,7 @@ describe('App', () => {
     expect(letterSet()).toBe('Vowels');
     learnLetters();
     fireEvent.click(screen.getByRole('button', {name: 'Exit to home'}));
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
     openSettings();
     expect(letterSet()).toBe('All letters');
 
@@ -230,7 +230,7 @@ describe('App', () => {
     const goHomeAndReopen = (exitButton: string) => {
       fireEvent.click(screen.getByRole('button', {name: exitButton}));
       expect(
-        screen.getByRole('heading', {name: 'Learn Georgian'}),
+        screen.getByRole('heading', {name: 'Learn Alphabet'}),
       ).toBeTruthy();
       openSettings();
       expect(letterSet()).toBe('All letters');
@@ -353,7 +353,7 @@ describe('App', () => {
     expect(score()).toBe('0');
 
     fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
   });
 
   it('exits during feedback without advancing later', () => {
@@ -362,7 +362,7 @@ describe('App', () => {
     fireEvent.click(confirmButton());
     fireEvent.click(screen.getByRole('button', {name: 'Exit training'}));
     wait(FAILED_FEEDBACK_DELAY_MS);
-    expect(screen.getByRole('heading', {name: 'Learn Georgian'})).toBeTruthy();
+    expect(screen.getByRole('heading', {name: 'Learn Alphabet'})).toBeTruthy();
   });
 
   it('supports choosing a letter with the keyboard', () => {

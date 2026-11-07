@@ -115,7 +115,7 @@ Display:
 
 - A first line with the Georgian name of the alphabet, "ქართული ანბანი", and the
   language switcher at its end.
-- Application title, such as "Learn Georgian".
+- Application title, such as "Learn Alphabet".
 - A prominent Georgian alphabet visual element.
 - A short description explaining that the user will hear sounds and select the
   matching letters.

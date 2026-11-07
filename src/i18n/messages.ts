@@ -108,7 +108,7 @@ const lettersEn = (count: number) =>
   `${count} ${pluralEn(count, {one: 'letter', other: 'letters'})}`;
 
 const en: Messages = {
-  documentTitle: 'Learn Georgian',
+  documentTitle: 'Learn Alphabet',
   languageSwitcher: 'Interface language',
   common: {
     exitToHome: 'Exit to home',
@@ -116,7 +116,7 @@ const en: Messages = {
     startTraining: 'Start Training',
   },
   home: {
-    title: 'Learn Georgian',
+    title: 'Learn Alphabet',
     description: (count) =>
       'Listen to the sound of a Georgian letter, then find it on the letter ' +
       `wheel. Train all ${count} letters or choose a smaller set. Each ` +
@@ -222,7 +222,7 @@ const lettersRu = (count: number) =>
   `${count} ${pluralRu(count, {one: 'буква', few: 'буквы', many: 'букв'})}`;
 
 const ru: Messages = {
-  documentTitle: 'Учим грузинский',
+  documentTitle: 'Учим алфавит',
   languageSwitcher: 'Язык интерфейса',
   common: {
     exitToHome: 'На главную',
@@ -230,7 +230,7 @@ const ru: Messages = {
     startTraining: 'Начать тренировку',
   },
   home: {
-    title: 'Учим грузинский',
+    title: 'Учим алфавит',
     description: (count) =>
       'Послушайте звук грузинской буквы и найдите её в карусели. ' +
       `Тренируйте все ${lettersRu(count)} или выберите набор поменьше. ` +
